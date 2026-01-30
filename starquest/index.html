@@ -593,10 +593,28 @@
       padding: 14px;
       display:grid;
       gap:12px;
-      overflow:auto;
+      overflow-y: scroll;
       flex: 1 1 auto;
       min-height: 0;
       -webkit-overflow-scrolling: touch;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(11,16,32,.35) rgba(11,16,32,.08);
+    }
+    .pageBody::-webkit-scrollbar{
+      width: 10px;
+    }
+    .pageBody::-webkit-scrollbar-track{
+      background: rgba(11,16,32,.08);
+      border-radius: 999px;
+    }
+    .pageBody::-webkit-scrollbar-thumb{
+      background: rgba(11,16,32,.35);
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,.6);
+    }
+    .pageBody::-webkit-scrollbar-thumb:hover{
+      background: rgba(11,16,32,.5);
     }
     /* Confetti */
     .spark{
