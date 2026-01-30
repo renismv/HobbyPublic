@@ -219,7 +219,7 @@
     .missionGrid{
       padding: 0 14px 14px;
       display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 10px;
       position:relative;
     }
@@ -233,7 +233,7 @@
       box-shadow: 0 16px 30px rgba(11,16,32,.10);
       display:flex;
       gap:10px;
-      align-items:center;
+      align-items:flex-start;
       cursor:pointer;
       user-select:none;
       min-height: 78px;
@@ -264,14 +264,14 @@
     .mText{ min-width:0; position:relative; z-index:1; }
     .mText .t{
       font-weight: 1100; font-size: 13px;
-      white-space: nowrap; overflow:hidden; text-overflow: ellipsis; max-width: 220px;
+      white-space: normal; overflow:hidden; text-overflow: ellipsis; max-width: 220px;
     }
     .mText .p{
       margin-top:3px;
       font-size: 12px;
       font-weight: 950;
       color: var(--muted);
-      display:flex; align-items:center; gap:8px;
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap;
     }
     .stars{
       margin-left:auto;
@@ -392,6 +392,47 @@
     }
     .redeemBtn[disabled]{ opacity:.55; cursor:not-allowed; }
 
+    .rewardList{
+      display:grid;
+      gap:10px;
+    }
+    .rewardItem{
+      border-radius: 18px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 14px 26px rgba(11,16,32,.08);
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .rewardItem.used{
+      opacity: .7;
+      background: rgba(236,253,245,.70);
+      border-color: rgba(34,197,94,.25);
+    }
+    .rewardMeta{
+      margin-top:4px;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 12px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .rewardStatus{
+      margin-left:auto;
+      font-weight: 1100;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(34,197,94,.14);
+      border: 1px solid rgba(34,197,94,.26);
+      color: #136b33;
+      white-space:nowrap;
+    }
+
     /* Toast */
     .toast{
       position: fixed;
@@ -511,6 +552,40 @@
       border: 1px solid rgba(236,72,153,.22);
     }
 
+    .pageBack{
+      position: fixed;
+      inset: 0;
+      background: rgba(11,16,32,.65);
+      display:none;
+      flex-direction:column;
+      z-index: 1100;
+      overflow:auto;
+      padding: 14px;
+    }
+    .pageBack.show{ display:flex; }
+    .page{
+      width: min(980px, 100%);
+      margin: 0 auto;
+      border-radius: 22px;
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(11,16,32,.10);
+      box-shadow: 0 30px 70px rgba(0,0,0,.30);
+      overflow:hidden;
+      backdrop-filter: var(--glass);
+    }
+    .pageHeader{
+      padding: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background:
+        radial-gradient(220px 160px at 20% 20%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(220px 160px at 85% 25%, rgba(6,182,212,.18), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.88));
+      border-bottom: 1px solid rgba(11,16,32,.08);
+    }
+    .pageBody{ padding: 14px; display:grid; gap:12px; }
     /* Confetti */
     .spark{
       position: fixed; top:0; left:0;
@@ -630,25 +705,12 @@
               <h2>Today’s Missions ⭐</h2>
               <div class="hint">Tap to earn stars.</div>
             </div>
-            <div class="hint" id="missionCount">—</div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+              <div class="hint" id="missionCount">—</div>
+              <button class="softBtn" id="openScheduleBtn">🗓️ Full schedule</button>
+            </div>
           </div>
           <div class="missionGrid" id="missionGrid"></div>
-        </div>
-
-        <div class="card" style="margin-top:12px;">
-          <div class="cardHeader">
-            <div>
-              <h2>Schedule (Today) 🗓️</h2>
-              <div class="hint">Tap an item to mark it done.</div>
-            </div>
-            <div class="hint">
-              <span class="tagMini">⭐ 19:00 homework → Uppa can help</span>
-              <span class="tagMini">👨‍👩‍👧 19:45 family time</span>
-            </div>
-          </div>
-          <div class="schedule">
-            <div class="timeline" id="timeline"></div>
-          </div>
         </div>
       </div>
 
@@ -656,18 +718,17 @@
         <div class="card">
           <div class="cardHeader">
             <div>
-              <h2>Reward Shop 🎁</h2>
-              <div class="hint">Costs ⭐. Parent approves.</div>
+              <h2>My Rewards 🎉</h2>
+              <div class="hint">Unlocked rewards show up here.</div>
             </div>
-            <div class="hint" id="parentStatus">Parent: OFF</div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+              <div class="hint" id="parentStatus">Parent: OFF</div>
+              <button class="softBtn" id="openShopBtn">🛍️ Reward shop</button>
+            </div>
           </div>
           <div class="storeWrap">
-            <div class="storeGrid" id="rewardGrid"></div>
-            <div class="row" style="justify-content:space-between;">
-              <button class="softBtn" id="addRewardBtn">➕ Add reward</button>
-              <button class="softBtn danger" id="weeklyResetBtn">🔁 New week</button>
-            </div>
-            <div class="hint">Tip: stars are real. Excuses are not. 😄</div>
+            <div class="rewardList" id="earnedRewardGrid"></div>
+            <div class="hint">Tip: save stars for big rewards 🎯</div>
           </div>
         </div>
 
@@ -746,79 +807,126 @@
     </div>
   </div>
 
-  <!-- MODAL: Parent -->
-  <div class="modalBack" id="parentModal">
+  <!-- MODAL: Schedule -->
+  <div class="modalBack" id="scheduleModal">
     <div class="modal">
       <div class="modalHead">
-        <h3>🔒 Parent Mode</h3>
-        <button class="xBtn" data-close="parentModal">✖ Close</button>
+        <h3>🗓️ Full Schedule (Today)</h3>
+        <button class="xBtn" data-close="scheduleModal">✖ Close</button>
       </div>
       <div class="modalBody">
         <div class="hint" style="margin-bottom:10px;">
-          Parent Mode approves rewards and edits rewards.
+          Tap an item to mark it done.
         </div>
-
-        <div class="formGrid">
-          <div>
-            <label>Enter parent code</label>
-            <input id="parentCodeInput" type="password" inputmode="numeric" placeholder="••••" />
-          </div>
-          <div>
-            <label>Action</label>
-            <select id="parentAction">
-              <option value="unlock">Unlock Parent Mode (10 min)</option>
-              <option value="set">Set/Change Parent Code</option>
-            </select>
-          </div>
-          <div id="newCodeWrap" style="display:none;">
-            <label>New code</label>
-            <input id="newParentCode" type="password" inputmode="numeric" placeholder="New code" />
-          </div>
-          <div id="confirmCodeWrap" style="display:none;">
-            <label>Confirm new code</label>
-            <input id="confirmParentCode" type="password" inputmode="numeric" placeholder="Confirm" />
-          </div>
-        </div>
-
-        <div class="row">
-          <button class="xBtn danger" id="lockParentBtn">🔒 Lock now</button>
-          <button class="xBtn primary" id="doParentBtn">✅ Continue</button>
+        <div class="schedule">
+          <div class="timeline" id="timeline"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: Add Reward -->
+  <!-- MODAL: Reward Shop -->
   <div class="modalBack" id="rewardModal">
     <div class="modal">
       <div class="modalHead">
-        <h3>🎁 Add reward</h3>
+        <h3>🛍️ Reward Shop</h3>
         <button class="xBtn" data-close="rewardModal">✖ Close</button>
       </div>
       <div class="modalBody">
-        <div class="hint" style="margin-bottom:10px;">Only in Parent Mode.</div>
+        <div class="hint" style="margin-bottom:10px;">Parent approval required to unlock.</div>
+        <div class="storeGrid" id="rewardGrid"></div>
+      </div>
+    </div>
+  </div>
 
-        <div class="formGrid">
-          <div>
-            <label>Reward name</label>
-            <input id="rewardName" placeholder="e.g., Choose the movie" />
+  <!-- PARENT PAGE -->
+  <div class="pageBack" id="parentPage">
+    <div class="page">
+      <div class="pageHeader">
+        <h3>🔒 Parent Controls</h3>
+        <button class="xBtn" data-close="parentPage">✖ Close</button>
+      </div>
+      <div class="pageBody">
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Parent Mode</h2>
+              <div class="hint">Unlock for 10 minutes to approve rewards.</div>
+            </div>
+            <div class="hint" id="parentPageStatus">Parent: OFF</div>
           </div>
-          <div>
-            <label>Icon</label>
-            <input id="rewardIcon" placeholder="e.g., 🍿" />
-          </div>
-          <div>
-            <label>Cost (stars)</label>
-            <input id="rewardCost" type="number" min="1" step="1" value="10" />
-          </div>
-          <div>
-            <label>Notes (optional)</label>
-            <input id="rewardNote" placeholder="e.g., Friday night" />
+          <div class="schedule" style="padding-top:0;">
+            <div class="formGrid">
+              <div>
+                <label>Enter parent code</label>
+                <input id="parentCodeInput" type="password" inputmode="numeric" placeholder="••••" />
+              </div>
+              <div>
+                <label>Action</label>
+                <select id="parentAction">
+                  <option value="unlock">Unlock Parent Mode (10 min)</option>
+                  <option value="set">Set/Change Parent Code</option>
+                </select>
+              </div>
+              <div id="newCodeWrap" style="display:none;">
+                <label>New code</label>
+                <input id="newParentCode" type="password" inputmode="numeric" placeholder="New code" />
+              </div>
+              <div id="confirmCodeWrap" style="display:none;">
+                <label>Confirm new code</label>
+                <input id="confirmParentCode" type="password" inputmode="numeric" placeholder="Confirm" />
+              </div>
+            </div>
+            <div class="row">
+              <button class="xBtn danger" id="lockParentBtn">🔒 Lock now</button>
+              <button class="xBtn primary" id="doParentBtn">✅ Continue</button>
+            </div>
           </div>
         </div>
 
-        <div class="row">
-          <button class="xBtn primary" id="saveRewardBtn">✅ Save reward</button>
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Reward Shop Setup</h2>
+              <div class="hint">Add rewards or reset the week.</div>
+            </div>
+          </div>
+          <div class="schedule" style="padding-top:0;">
+            <div class="formGrid">
+              <div>
+                <label>Reward name</label>
+                <input id="rewardName" placeholder="e.g., Choose the movie" />
+              </div>
+              <div>
+                <label>Icon</label>
+                <input id="rewardIcon" placeholder="e.g., 🍿" />
+              </div>
+              <div>
+                <label>Cost (stars)</label>
+                <input id="rewardCost" type="number" min="1" step="1" value="10" />
+              </div>
+              <div>
+                <label>Notes (optional)</label>
+                <input id="rewardNote" placeholder="e.g., Friday night" />
+              </div>
+            </div>
+            <div class="row">
+              <button class="xBtn primary" id="saveRewardBtn">✅ Save reward</button>
+              <button class="xBtn danger" id="weeklyResetBtn">🔁 New week</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Purchased Rewards</h2>
+              <div class="hint">Mark rewards as used or clear them.</div>
+            </div>
+          </div>
+          <div class="schedule" style="padding-top:0;">
+            <div class="rewardList" id="parentRewardList"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -887,6 +995,7 @@
       return {
         stars: 0,
         rewards: DEFAULT_REWARDS,
+        purchasedRewards: [],
         completedByDate: {},      // { "YYYY-MM-DD": { [taskId]: true } }
         customTasksByDate: {},    // { "YYYY-MM-DD": [task] }
         reminders: {},            // { "YYYY-MM-DD": { [taskId]: { at:"HH:MM", fired:false, icon, name } } }
@@ -1099,7 +1208,10 @@
     function renderHUD(){
       document.getElementById("starBalance").textContent = state.stars;
       document.getElementById("streak").textContent = calcStreak();
-      document.getElementById("parentStatus").textContent = "Parent: " + (isParentUnlocked() ? "ON ✅" : "OFF");
+      const parentLabel = "Parent: " + (isParentUnlocked() ? "ON ✅" : "OFF");
+      document.getElementById("parentStatus").textContent = parentLabel;
+      const parentPageStatus = document.getElementById("parentPageStatus");
+      if(parentPageStatus) parentPageStatus.textContent = parentLabel;
     }
 
     function renderTime(){
@@ -1222,7 +1334,7 @@
       renderNowBox();
     }
 
-    function renderRewards(){
+    function renderRewardShop(){
       const grid = document.getElementById("rewardGrid");
       grid.innerHTML = "";
       const parentOn = isParentUnlocked();
@@ -1258,10 +1370,20 @@
           }
 
           state.stars -= r.cost;
+          state.purchasedRewards.unshift({
+            id: "pr|" + randId(),
+            name: r.name,
+            icon: r.icon,
+            note: r.note,
+            cost: r.cost,
+            redeemedAt: new Date().toISOString(),
+            used: false
+          });
           save();
           popStars(window.innerWidth/2, window.innerHeight - 120);
           toast("🎁","Reward unlocked!", `"${r.name}" approved ✅`);
-          renderRewards();
+          renderRewardShop();
+          renderPurchasedRewards();
           renderHUD();
         });
 
@@ -1273,7 +1395,7 @@
             if(confirm(`Delete reward "${r.name}"?`)){
               state.rewards = state.rewards.filter(x => x.id !== r.id);
               save();
-              renderRewards();
+              renderRewardShop();
             }
           }, 700);
         };
@@ -1286,6 +1408,69 @@
         card.addEventListener("mouseleave", stop);
 
         grid.appendChild(card);
+      }
+    }
+
+    function renderPurchasedRewards(){
+      const earnedGrid = document.getElementById("earnedRewardGrid");
+      const parentGrid = document.getElementById("parentRewardList");
+      if(earnedGrid){
+        earnedGrid.innerHTML = "";
+        if(!state.purchasedRewards.length){
+          earnedGrid.innerHTML = `<div class="hint">No rewards unlocked yet. ⭐</div>`;
+        }else{
+          for(const reward of state.purchasedRewards){
+            const item = document.createElement("div");
+            item.className = "rewardItem" + (reward.used ? " used" : "");
+            item.innerHTML = `
+              <div class="rIcon">${escapeHtml(reward.icon || "🎁")}</div>
+              <div class="rText">
+                <div class="t">${escapeHtml(reward.name)}</div>
+                <div class="rewardMeta">
+                  <span class="tagMini">${escapeHtml(reward.note || "Reward")}</span>
+                  <span class="cost">${reward.cost} ⭐</span>
+                </div>
+              </div>
+              <div class="rewardStatus">${reward.used ? "Used" : "Active"}</div>
+            `;
+            earnedGrid.appendChild(item);
+          }
+        }
+      }
+
+      if(parentGrid){
+        parentGrid.innerHTML = "";
+        if(!state.purchasedRewards.length){
+          parentGrid.innerHTML = `<div class="hint">No purchased rewards yet.</div>`;
+        }else{
+          for(const reward of state.purchasedRewards){
+            const row = document.createElement("div");
+            row.className = "rewardItem" + (reward.used ? " used" : "");
+            row.innerHTML = `
+              <div class="rIcon">${escapeHtml(reward.icon || "🎁")}</div>
+              <div class="rText">
+                <div class="t">${escapeHtml(reward.name)}</div>
+                <div class="rewardMeta">
+                  <span class="tagMini">${escapeHtml(reward.note || "Reward")}</span>
+                  <span class="cost">${reward.cost} ⭐</span>
+                </div>
+              </div>
+              <button class="softBtn">${reward.used ? "Mark active" : "Mark used"}</button>
+            `;
+            const btn = row.querySelector("button");
+            btn.addEventListener("click", ()=>{
+              if(!isParentUnlocked()){
+                toast("🔒","Parent needed","Unlock Parent Mode first.");
+                return;
+              }
+              reward.used = !reward.used;
+              save();
+              renderPurchasedRewards();
+              renderHUD();
+            });
+            parentGrid.appendChild(row);
+          }
+        }
       }
     }
 
@@ -1334,7 +1519,8 @@
       renderHUD();
       renderMissions();
       renderSchedule();
-      renderRewards();
+      renderRewardShop();
+      renderPurchasedRewards();
       renderSpecialBox();
     }
 
@@ -1354,6 +1540,14 @@
 
     // Add task
     document.getElementById("addTaskBtn").addEventListener("click", ()=> showModal("taskModal"));
+    document.getElementById("openScheduleBtn").addEventListener("click", ()=>{
+      renderSchedule();
+      showModal("scheduleModal");
+    });
+    document.getElementById("openShopBtn").addEventListener("click", ()=>{
+      renderRewardShop();
+      showModal("rewardModal");
+    });
     document.getElementById("saveTaskBtn").addEventListener("click", ()=>{
       const name = document.getElementById("taskName").value.trim();
       const icon = document.getElementById("taskIcon").value.trim() || "🧩";
@@ -1403,7 +1597,11 @@
     });
 
     // Parent
-    document.getElementById("parentBtn").addEventListener("click", ()=> showModal("parentModal"));
+    document.getElementById("parentBtn").addEventListener("click", ()=>{
+      renderHUD();
+      renderPurchasedRewards();
+      showModal("parentPage");
+    });
     document.getElementById("parentAction").addEventListener("change", (e)=>{
       const isSet = e.target.value === "set";
       document.getElementById("newCodeWrap").style.display = isSet ? "block" : "none";
@@ -1413,7 +1611,7 @@
     document.getElementById("lockParentBtn").addEventListener("click", ()=>{
       state.parent.unlockedUntil = 0;
       save();
-      hideModal("parentModal");
+      hideModal("parentPage");
       toast("🔒","Locked","Parent Mode OFF");
     });
 
@@ -1439,7 +1637,7 @@
         }
         state.parent.unlockedUntil = Date.now() + 10*60*1000;
         save();
-        hideModal("parentModal");
+        hideModal("parentPage");
         toast("🔓","Parent Mode ON","10 minutes unlocked.");
         return;
       }
@@ -1483,7 +1681,7 @@
 
       state.parent.unlockedUntil = Date.now() + 10*60*1000;
       save();
-      hideModal("parentModal");
+      hideModal("parentPage");
       toast("✅","Parent code set","Parent Mode ON for 10 min.");
 
       document.getElementById("parentCodeInput").value = "";
@@ -1491,14 +1689,6 @@
       document.getElementById("confirmParentCode").value = "";
     });
 
-    // Add reward
-    document.getElementById("addRewardBtn").addEventListener("click", ()=>{
-      if(!isParentUnlocked()){
-        toast("🔒","Parent needed","Unlock Parent Mode first.");
-        return;
-      }
-      showModal("rewardModal");
-    });
     document.getElementById("saveRewardBtn").addEventListener("click", ()=>{
       if(!isParentUnlocked()){
         toast("🔒","Parent needed","Unlock Parent Mode first.");
@@ -1515,8 +1705,8 @@
       }
       state.rewards.push({ id: "rw|" + randId(), name, icon, cost, note });
       save();
-      hideModal("rewardModal");
-      renderRewards();
+      renderRewardShop();
+      renderPurchasedRewards();
       toast("🎁","Reward added", `${icon} ${name} (${cost}⭐)`);
 
       document.getElementById("rewardName").value = "";
