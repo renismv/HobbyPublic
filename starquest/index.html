@@ -754,6 +754,29 @@
     </div>
   </div>
 
+  <!-- MODAL: Parent Gate -->
+  <div class="modalBack" id="parentGateModal">
+    <div class="modal">
+      <div class="modalHead">
+        <h3>🔒 Parent Access</h3>
+        <button class="xBtn" data-close="parentGateModal">✖ Close</button>
+      </div>
+      <div class="modalBody">
+        <div class="hint" style="margin-bottom:10px;">Enter the parent code to open controls.</div>
+        <div class="formGrid">
+          <div>
+            <label>Parent code</label>
+            <input id="parentGateInput" type="password" inputmode="numeric" placeholder="••••" />
+          </div>
+        </div>
+        <div class="row">
+          <button class="xBtn primary" id="parentGateUnlockBtn">✅ Unlock</button>
+          <button class="xBtn" id="parentGateSetupBtn">⚙️ Set code</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: Add Task -->
   <div class="modalBack" id="taskModal">
     <div class="modal">
@@ -815,7 +838,7 @@
           <div class="cardHeader">
             <div>
               <h2>Schedule Timeline</h2>
-              <div class="hint">Tap an item to mark it done.</div>
+              <div class="hint">Full schedule view (read-only).</div>
             </div>
             <div class="hint">
               <span class="tagMini">⭐ 19:00 homework → Uppa can help</span>
@@ -1384,7 +1407,7 @@
       }
     }
 
-    function renderSchedule(){
+    function renderSchedule(readOnly = false){
       const tl = document.getElementById("timeline");
       tl.innerHTML = "";
 
@@ -1413,13 +1436,15 @@
           <div style="font-size:18px; opacity:.9;">${done ? "✅" : "⬜️"}</div>
         `;
 
-        row.addEventListener("click", ()=>{
-          if(done){
-            toast("✅","Done already","(Undo is not enabled — kids are too clever.)");
-            return;
-          }
-          markDone(t, row);
-        });
+        if(!readOnly){
+          row.addEventListener("click", ()=>{
+            if(done){
+              toast("✅","Done already","(Undo is not enabled — kids are too clever.)");
+              return;
+            }
+            markDone(t, row);
+          });
+        }
 
         tl.appendChild(row);
       }
@@ -1673,7 +1698,7 @@
     // Add task
     document.getElementById("addTaskBtn").addEventListener("click", ()=> showModal("taskModal"));
     document.getElementById("openScheduleBtn").addEventListener("click", ()=>{
-      renderSchedule();
+      renderSchedule(true);
       renderSpecialBox();
       showModal("schedulePage");
     });
@@ -1730,19 +1755,28 @@
     });
 
     // Parent
-    document.getElementById("parentBtn").addEventListener("click", async ()=>{
-      const hasCode = state.parent.codeHash || state.parent.codePlain;
-      if(!hasCode){
-        toast("🔧","Set Parent Code","Use Parent Controls to create a code.");
+    document.getElementById("parentBtn").addEventListener("click", ()=>{
+      if(isParentUnlocked()){
         renderHUD();
         renderPurchasedRewards();
         renderParentScheduleList();
         showModal("parentPage");
         return;
       }
-
-      const code = prompt("Enter parent code to continue:");
-      if(!code) return;
+      showModal("parentGateModal");
+    });
+    document.getElementById("parentGateUnlockBtn").addEventListener("click", async ()=>{
+      const hasCode = state.parent.codeHash || state.parent.codePlain;
+      if(!hasCode){
+        toast("🔧","Set Parent Code","Use Parent Controls to create a code.");
+        showModal("parentPage");
+        return;
+      }
+      const code = document.getElementById("parentGateInput").value.trim();
+      if(!code){
+        toast("⚠️","Enter code","Please type the parent code.");
+        return;
+      }
       if(state.parent.codeHash){
         const h = await sha256(code);
         if(!h || h !== state.parent.codeHash){
@@ -1755,12 +1789,20 @@
           return;
         }
       }
-
       state.parent.unlockedUntil = Date.now() + 10*60*1000;
       save();
+      document.getElementById("parentGateInput").value = "";
+      hideModal("parentGateModal");
       renderHUD();
       renderPurchasedRewards();
       renderParentScheduleList();
+      showModal("parentPage");
+    });
+    document.getElementById("parentGateSetupBtn").addEventListener("click", ()=>{
+      hideModal("parentGateModal");
+      document.getElementById("parentAction").value = "set";
+      document.getElementById("newCodeWrap").style.display = "block";
+      document.getElementById("confirmCodeWrap").style.display = "block";
       showModal("parentPage");
     });
     document.getElementById("parentAction").addEventListener("change", (e)=>{
