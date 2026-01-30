@@ -1,0 +1,2042 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Fathayya Star Quest ✨</title>
+  <style>
+    :root{
+      --ink:#0b1020;
+      --muted:#5b6576;
+      --card:rgba(255,255,255,.78);
+      --glass: blur(14px);
+      --shadow: 0 18px 40px rgba(11,16,32,.12);
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      background:
+        radial-gradient(1100px 600px at 15% 12%, rgba(124,58,237,.35), transparent 55%),
+        radial-gradient(900px 520px at 85% 20%, rgba(6,182,212,.30), transparent 55%),
+        radial-gradient(1000px 650px at 50% 100%, rgba(236,72,153,.18), transparent 60%),
+        linear-gradient(180deg, #0b1020 0%, #0b1020 8%, #f7f8ff 30%, #ffffff 100%);
+      overflow-x:hidden;
+    }
+    .wrap{
+      max-width: 1350px;
+      margin: 0 auto;
+      padding: 14px 14px 22px;
+      padding-top: calc(14px + env(safe-area-inset-top));
+      padding-bottom: calc(22px + env(safe-area-inset-bottom));
+    }
+
+    /* Top header */
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding: 12px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.20);
+      backdrop-filter: var(--glass);
+      box-shadow: 0 18px 40px rgba(0,0,0,.18);
+    }
+    .brand{ display:flex; gap:12px; align-items:center; min-width:0; }
+    .avatar{
+      width:54px; height:54px; border-radius: 18px;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.20);
+      display:grid; place-items:center; overflow:hidden; flex:0 0 auto;
+    }
+    .brand h1{ margin:0; font-size: 18px; color:#fff; letter-spacing:.2px; line-height:1.1; }
+    .brand .tag{
+      margin-top:4px; color: rgba(255,255,255,.80);
+      font-weight: 900; font-size: 12px;
+      white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
+      max-width: 520px;
+    }
+
+    .hud{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 10px; border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.22);
+      color:#fff; font-weight: 950; font-size: 12px; user-select:none;
+    }
+    .pill b{ font-variant-numeric: tabular-nums; }
+
+    .btn{
+      border:0; border-radius: 999px; padding: 8px 12px;
+      font-weight: 1000; font-size: 12px; cursor:pointer; user-select:none;
+      color:#0b1020;
+      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.78));
+      box-shadow: 0 14px 26px rgba(0,0,0,.18);
+      display:inline-flex; align-items:center; gap:8px;
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    /* Layout */
+    .grid{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 12px;
+      align-items:start;
+    }
+    @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card{
+      border-radius: 22px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.55);
+      backdrop-filter: var(--glass);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card::after{
+      content:"";
+      position:absolute;
+      inset: -90px -110px auto auto;
+      width: 280px; height: 180px;
+      background:
+        radial-gradient(circle at 35% 35%, rgba(124,58,237,.25), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(6,182,212,.22), transparent 60%),
+        radial-gradient(circle at 40% 80%, rgba(34,197,94,.18), transparent 62%);
+      transform: rotate(14deg);
+      pointer-events:none;
+    }
+    .cardHeader{
+      padding: 14px 14px 10px;
+      display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
+      position:relative;
+    }
+    .cardHeader h2{ margin:0; font-size: 16px; letter-spacing:.2px; }
+    .hint{ color: var(--muted); font-size: 12px; font-weight: 900; }
+
+    /* Dashboard */
+    .dash{
+      padding: 0 14px 14px;
+      display:grid;
+      grid-template-columns: .95fr 1.05fr;
+      gap: 10px;
+      position:relative;
+    }
+    @media (max-width: 980px){ .dash{ grid-template-columns: 1fr; } }
+
+    .bigTime{
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 16px 30px rgba(11,16,32,.10);
+      padding: 12px;
+      display:flex; flex-direction:column; justify-content:space-between;
+      min-height: 140px;
+    }
+    .clockRow{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
+    .time{
+      font-variant-numeric: tabular-nums;
+      font-size: 44px;
+      font-weight: 1100;
+      line-height: 1;
+      letter-spacing: .8px;
+    }
+    .ampm{ font-size: 13px; font-weight: 1000; color: var(--muted); margin-bottom: 6px; }
+    .date{
+      margin-top: 8px;
+      font-weight: 1000;
+      color: var(--muted);
+      font-size: 13px;
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 7px 10px; border-radius: 999px;
+      background: rgba(124,58,237,.10);
+      border: 1px solid rgba(124,58,237,.22);
+      font-weight: 1000;
+      color:#3b1a8f;
+      font-size: 12px;
+    }
+    .nowBox{
+      border-radius: 20px;
+      padding: 12px;
+      background:
+        radial-gradient(220px 140px at 18% 25%, rgba(236,72,153,.16), transparent 60%),
+        radial-gradient(250px 160px at 88% 20%, rgba(34,197,94,.14), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 16px 30px rgba(11,16,32,.10);
+      min-height: 140px;
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .nowTop{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+    .nowTitle{ display:flex; gap:10px; align-items:center; min-width:0; }
+    .bubbleIcon{
+      width: 48px; height: 48px; border-radius: 16px;
+      display:grid; place-items:center; font-size: 24px;
+      background: rgba(255,255,255,.8);
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 14px 26px rgba(11,16,32,.10);
+      flex:0 0 auto;
+    }
+    .nowText{ min-width:0; }
+    .nowText .label{
+      font-weight: 1100; font-size: 14px; line-height:1.15; margin-top:2px;
+      white-space: nowrap; overflow:hidden; text-overflow: ellipsis; max-width: 520px;
+    }
+    .nowText .sub2{ margin-top: 4px; color: var(--muted); font-size: 12px; font-weight: 950; }
+    .ctaRow{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; }
+    .softBtn{
+      border: 1px solid rgba(11,16,32,.10);
+      background: rgba(255,255,255,.85);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-weight: 1050;
+      font-size: 12px;
+      cursor:pointer;
+      user-select:none;
+      box-shadow: 0 12px 22px rgba(11,16,32,.10);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    /* Tiny label badges */
+    .tagMini{
+      display:inline-flex; align-items:center; gap:6px;
+      padding: 5px 8px; border-radius: 999px;
+      background: rgba(124,58,237,.10);
+      border: 1px solid rgba(124,58,237,.20);
+      font-weight: 1000; font-size: 11px;
+      color: #3b1a8f;
+    }
+
+    /* Missions */
+    .missionGrid{
+      padding: 0 14px 14px;
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      position:relative;
+    }
+    @media (max-width: 1100px){ .missionGrid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+
+    .mission{
+      border-radius: 20px;
+      padding: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 16px 30px rgba(11,16,32,.10);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      cursor:pointer;
+      user-select:none;
+      min-height: 78px;
+      position:relative;
+      overflow:hidden;
+    }
+    .mission::before{
+      content:"";
+      position:absolute;
+      inset:-40px -60px auto auto;
+      width: 160px; height: 120px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(6,182,212,.18), transparent 60%);
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+    .mIcon{
+      width: 54px; height: 54px; border-radius: 18px;
+      display:grid; place-items:center; font-size: 26px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 14px 26px rgba(11,16,32,.10);
+      flex:0 0 auto;
+      position:relative;
+      z-index:1;
+    }
+    .mText{ min-width:0; position:relative; z-index:1; }
+    .mText .t{
+      font-weight: 1100; font-size: 13px;
+      white-space: normal; overflow:hidden; text-overflow: ellipsis; max-width: 220px;
+    }
+    .mText .p{
+      margin-top:3px;
+      font-size: 12px;
+      font-weight: 950;
+      color: var(--muted);
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    }
+    .stars{
+      margin-left:auto;
+      font-weight: 1100; font-size: 12px;
+      padding: 6px 10px; border-radius: 999px;
+      background: rgba(245,158,11,.14);
+      border: 1px solid rgba(245,158,11,.26);
+      color: #7a4b00;
+      flex:0 0 auto;
+      position:relative;
+      z-index:1;
+    }
+    .done{
+      outline: 3px solid rgba(34,197,94,.40);
+      background: linear-gradient(180deg, rgba(236,253,245,.90), rgba(255,255,255,.70));
+    }
+    .done .stars{
+      background: rgba(34,197,94,.14);
+      border-color: rgba(34,197,94,.26);
+      color: #136b33;
+    }
+
+    /* Schedule */
+    .schedule{ padding: 0 14px 14px; position:relative; }
+    .timeline{ display:flex; flex-direction:column; gap:8px; }
+    .item{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 16px 30px rgba(11,16,32,.08);
+      cursor:pointer; user-select:none;
+    }
+    .tbox{
+      width:64px; height:42px; border-radius: 14px;
+      display:grid; place-items:center;
+      font-weight: 1100; font-variant-numeric: tabular-nums; letter-spacing:.6px;
+      background:
+        radial-gradient(18px 14px at 20% 30%, rgba(6,182,212,.18), transparent 65%),
+        radial-gradient(18px 14px at 80% 60%, rgba(124,58,237,.16), transparent 65%),
+        linear-gradient(180deg,#ffffff,#f7f8ff);
+      border: 1px solid rgba(11,16,32,.08);
+    }
+    .iIcon{
+      width:44px; height:44px; border-radius: 16px;
+      display:grid; place-items:center; font-size: 22px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 14px 26px rgba(11,16,32,.08);
+      flex:0 0 auto;
+    }
+    .iText{ min-width:0; flex:1 1 auto; }
+    .iText .name{ font-weight:1100; font-size: 13px; white-space: nowrap; overflow:hidden; text-overflow: ellipsis; }
+    .iText .meta{ margin-top:3px; color: var(--muted); font-size: 12px; font-weight: 900; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .nowGlow{ outline: 3px solid rgba(6,182,212,.35); box-shadow: 0 18px 36px rgba(6,182,212,.18); }
+    .itemDone{ opacity: .78; background: rgba(236,253,245,.80); outline: 3px solid rgba(34,197,94,.30); }
+
+    /* Store */
+    .storeWrap{ padding: 0 14px 14px; display:grid; gap: 10px; }
+    .storeGrid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; }
+    @media (max-width: 980px){ .storeGrid{ grid-template-columns: 1fr; } }
+
+    .reward{
+      border-radius: 20px;
+      padding: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 16px 30px rgba(11,16,32,.10);
+      display:flex; gap:10px; align-items:center;
+      position:relative; overflow:hidden;
+    }
+    .reward::before{
+      content:"";
+      position:absolute;
+      inset:-50px -60px auto auto;
+      width: 160px; height: 120px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(245,158,11,.18), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(236,72,153,.16), transparent 60%);
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+    .rIcon{
+      width:54px; height:54px; border-radius: 18px;
+      display:grid; place-items:center; font-size: 26px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 14px 26px rgba(11,16,32,.10);
+      flex:0 0 auto;
+      position:relative; z-index:1;
+    }
+    .rText{ min-width:0; flex:1 1 auto; position:relative; z-index:1; }
+    .rText .t{ font-weight:1100; font-size: 13px; white-space: nowrap; overflow:hidden; text-overflow: ellipsis; }
+    .rText .p{ margin-top:3px; color: var(--muted); font-weight: 950; font-size: 12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .cost{
+      font-weight:1100; font-size: 12px;
+      padding: 6px 10px; border-radius: 999px;
+      background: rgba(245,158,11,.14);
+      border: 1px solid rgba(245,158,11,.26);
+      color: #7a4b00;
+      white-space:nowrap;
+    }
+    .redeemBtn{
+      margin-left:auto;
+      border: 1px solid rgba(11,16,32,.10);
+      background: rgba(255,255,255,.90);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-weight: 1100;
+      font-size: 12px;
+      cursor:pointer;
+      user-select:none;
+      box-shadow: 0 12px 22px rgba(11,16,32,.10);
+      position:relative;
+      z-index:1;
+      white-space:nowrap;
+    }
+    .redeemBtn[disabled]{ opacity:.55; cursor:not-allowed; }
+
+    .rewardList{
+      display:grid;
+      gap:10px;
+    }
+    .rewardItem{
+      border-radius: 18px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 14px 26px rgba(11,16,32,.08);
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .rewardItem.used{
+      opacity: .7;
+      background: rgba(236,253,245,.70);
+      border-color: rgba(34,197,94,.25);
+    }
+    .rewardMeta{
+      margin-top:4px;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 12px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .rewardStatus{
+      margin-left:auto;
+      font-weight: 1100;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(34,197,94,.14);
+      border: 1px solid rgba(34,197,94,.26);
+      color: #136b33;
+      white-space:nowrap;
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: calc(14px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(11,16,32,.10);
+      box-shadow: 0 20px 40px rgba(11,16,32,.18);
+      border-radius: 18px;
+      padding: 10px 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      max-width: min(780px, calc(100vw - 28px));
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      transform: translateX(-50%) translateY(10px);
+      z-index: 999;
+      backdrop-filter: var(--glass);
+    }
+    .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+    .toast .ico{
+      width:42px; height:42px; border-radius: 16px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(11,16,32,.08);
+      font-size: 20px; flex:0 0 auto;
+    }
+    .toast .txt{ min-width:0; }
+    .toast .txt .a{ font-weight:1100; font-size: 13px; white-space: nowrap; overflow:hidden; text-overflow: ellipsis; }
+    .toast .txt .b{ margin-top:3px; color: var(--muted); font-weight:950; font-size: 12px; }
+
+    /* Modal */
+    .modalBack{
+      position: fixed; inset:0;
+      background: rgba(11,16,32,.55);
+      display:none; align-items:center; justify-content:center;
+      padding: 14px;
+      z-index: 1000;
+    }
+    .modalBack.show{ display:flex; }
+    .modal{
+      width: min(760px, 100%);
+      border-radius: 22px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(11,16,32,.10);
+      box-shadow: 0 30px 70px rgba(0,0,0,.30);
+      overflow:hidden;
+      backdrop-filter: var(--glass);
+    }
+    .modalHead{
+      padding: 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background:
+        radial-gradient(220px 160px at 20% 20%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(220px 160px at 85% 25%, rgba(6,182,212,.18), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.88));
+      border-bottom: 1px solid rgba(11,16,32,.08);
+    }
+    .modalHead h3{ margin:0; font-size: 15px; letter-spacing:.2px; }
+    .xBtn{
+      border: 1px solid rgba(11,16,32,.10);
+      background: rgba(255,255,255,.90);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-weight: 1100;
+      font-size: 12px;
+      cursor:pointer;
+      user-select:none;
+      box-shadow: 0 12px 22px rgba(11,16,32,.10);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .modalBody{ padding: 14px; }
+    .formGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 640px){ .formGrid{ grid-template-columns: 1fr; } }
+    label{
+      display:block;
+      font-size: 12px;
+      font-weight: 1000;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input, select{
+      width:100%;
+      border-radius: 16px;
+      border: 1px solid rgba(11,16,32,.12);
+      padding: 12px 12px;
+      font-weight: 1000;
+      font-size: 14px;
+      background: rgba(255,255,255,.85);
+      outline:none;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+      margin-top: 12px;
+      flex-wrap:wrap;
+    }
+    .primary{
+      background: linear-gradient(180deg, rgba(124,58,237,.95), rgba(124,58,237,.78));
+      color:#fff;
+      border: 1px solid rgba(124,58,237,.25);
+    }
+    .danger{
+      background: linear-gradient(180deg, rgba(236,72,153,.95), rgba(236,72,153,.78));
+      color:#fff;
+      border: 1px solid rgba(236,72,153,.22);
+    }
+
+    .pageBack{
+      position: fixed;
+      inset: 0;
+      background: rgba(11,16,32,.65);
+      display:none;
+      flex-direction:column;
+      z-index: 1100;
+      overflow:auto;
+      padding: 14px;
+      align-items:center;
+    }
+    .pageBack.show{ display:flex; }
+    .page{
+      width: min(980px, 100%);
+      margin: 0 auto;
+      border-radius: 22px;
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(11,16,32,.10);
+      box-shadow: 0 30px 70px rgba(0,0,0,.30);
+      overflow:hidden;
+      backdrop-filter: var(--glass);
+      height: calc(100vh - 28px);
+      display:flex;
+      flex-direction:column;
+    }
+    .pageHeader{
+      padding: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background:
+        radial-gradient(220px 160px at 20% 20%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(220px 160px at 85% 25%, rgba(6,182,212,.18), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.88));
+      border-bottom: 1px solid rgba(11,16,32,.08);
+    }
+    .pageBody{
+      padding: 14px;
+      display:grid;
+      gap:12px;
+      overflow:auto;
+      max-height: calc(100vh - 140px);
+    }
+    /* Confetti */
+    .spark{
+      position: fixed; top:0; left:0;
+      width: 10px; height: 10px;
+      pointer-events:none;
+      z-index: 1200;
+      animation: fly 900ms ease-out forwards;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
+    }
+    @keyframes fly{
+      0%{ transform: translate(var(--x0), var(--y0)) scale(.9) rotate(0deg); opacity: 1; }
+      100%{ transform: translate(var(--x1), var(--y1)) scale(1.15) rotate(220deg); opacity: 0; }
+    }
+    .tiny{
+      margin-top:10px;
+      color: rgba(255,255,255,.70);
+      font-size: 12px;
+      font-weight: 900;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="avatar" aria-hidden="true">
+          <!-- Curly-hair girl SVG -->
+          <svg viewBox="0 0 120 120" width="54" height="54">
+            <defs>
+              <linearGradient id="gFace" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#ffe9d6"/>
+                <stop offset="1" stop-color="#ffd1b3"/>
+              </linearGradient>
+              <linearGradient id="gHair" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0" stop-color="#2b1d1b"/>
+                <stop offset="1" stop-color="#4a2a22"/>
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="58" fill="rgba(255,255,255,.12)"/>
+            <g fill="url(#gHair)" opacity=".98">
+              <circle cx="30" cy="34" r="10"/><circle cx="44" cy="26" r="11"/><circle cx="60" cy="24" r="12"/>
+              <circle cx="76" cy="26" r="11"/><circle cx="90" cy="34" r="10"/>
+              <circle cx="25" cy="50" r="10"/><circle cx="95" cy="50" r="10"/>
+              <circle cx="28" cy="64" r="9"/><circle cx="92" cy="64" r="9"/>
+            </g>
+            <circle cx="60" cy="62" r="30" fill="url(#gFace)" stroke="rgba(255,255,255,.22)" stroke-width="2"/>
+            <circle cx="48" cy="60" r="3.8" fill="#0b1020"/><circle cx="72" cy="60" r="3.8" fill="#0b1020"/>
+            <circle cx="49" cy="59" r="1.2" fill="#fff"/><circle cx="73" cy="59" r="1.2" fill="#fff"/>
+            <path d="M48 72c6 7 18 7 24 0" fill="none" stroke="#0b1020" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="31" cy="64" r="2.5" fill="#ec4899"/><circle cx="89" cy="64" r="2.5" fill="#ec4899"/>
+          </svg>
+        </div>
+        <div style="min-width:0">
+          <h1>Star Quest ✨</h1>
+          <div class="tag">Do a few good things → earn ⭐ → unlock rewards 🎁</div>
+        </div>
+      </div>
+
+      <div class="hud">
+        <div class="pill" title="Stars you have right now">⭐ Stars: <b id="starBalance">0</b></div>
+        <div class="pill" title="Streak = days with at least 2 missions done">🔥 Streak: <b id="streak">0</b></div>
+        <button class="btn" id="addTaskBtn">➕ Add task</button>
+        <button class="btn" id="parentBtn">🔒 Parent</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="col">
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Dashboard 🚀</h2>
+              <div class="hint">Time + what’s happening now.</div>
+            </div>
+            <div class="hint" id="dayLabel">—</div>
+          </div>
+
+          <div class="dash">
+            <div class="bigTime">
+              <div class="clockRow">
+                <div>
+                  <div class="time" id="timeNow">--:--</div>
+                  <div class="ampm" id="ampm">—</div>
+                </div>
+                <div style="font-size:34px; filter: drop-shadow(0 10px 20px rgba(0,0,0,.10));">🕒</div>
+              </div>
+              <div class="date">
+                <span class="chip" id="dateNow">—</span>
+                <span class="chip" id="specialChip" style="display:none">✨ Special day</span>
+              </div>
+            </div>
+
+            <div class="nowBox">
+              <div class="nowTop">
+                <div class="nowTitle">
+                  <div class="bubbleIcon" id="nowIcon">🎯</div>
+                  <div class="nowText">
+                    <div class="label" id="nowTask">Loading…</div>
+                    <div class="sub2" id="nowMeta">—</div>
+                  </div>
+                </div>
+                <div style="font-weight:1000; font-size:12px; color:var(--muted); text-align:right;" id="nextIn">—</div>
+              </div>
+
+              <div class="ctaRow">
+                <button class="softBtn" id="markNowDoneBtn">✅ Done</button>
+                <button class="softBtn" id="nudgeBtn">🔔 Remind me</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <div class="cardHeader">
+            <div>
+              <h2>Today’s Missions ⭐</h2>
+              <div class="hint">Tap to earn stars.</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+              <div class="hint" id="missionCount">—</div>
+              <button class="softBtn" id="openScheduleBtn">🗓️ Full schedule</button>
+            </div>
+          </div>
+          <div class="missionGrid" id="missionGrid"></div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>My Rewards 🎉</h2>
+              <div class="hint">Unlocked rewards show up here.</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+              <button class="softBtn" id="openShopBtn">🛍️ Reward shop</button>
+            </div>
+          </div>
+          <div class="storeWrap">
+            <div class="rewardList" id="earnedRewardGrid"></div>
+            <div class="hint">Tip: save stars for big rewards 🎯</div>
+          </div>
+        </div>
+
+        <div class="tiny">Saves progress on this device (local). If Safari data is cleared, progress resets.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <div class="ico" id="toastIcon">🔔</div>
+    <div class="txt">
+      <div class="a" id="toastA">Reminder</div>
+      <div class="b" id="toastB">—</div>
+    </div>
+  </div>
+
+  <!-- MODAL: Parent Gate -->
+  <div class="modalBack" id="parentGateModal">
+    <div class="modal">
+      <div class="modalHead">
+        <h3>🔒 Parent Access</h3>
+        <button class="xBtn" data-close="parentGateModal">✖ Close</button>
+      </div>
+      <div class="modalBody">
+        <div class="hint" style="margin-bottom:10px;">Enter the parent code to open controls.</div>
+        <div class="formGrid">
+          <div>
+            <label>Parent code</label>
+            <input id="parentGateInput" type="password" inputmode="numeric" placeholder="••••" />
+          </div>
+        </div>
+        <div class="row">
+          <button class="xBtn primary" id="parentGateUnlockBtn">✅ Unlock</button>
+          <button class="xBtn" id="parentGateSetupBtn">⚙️ Set code</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Add Task -->
+  <div class="modalBack" id="taskModal">
+    <div class="modal">
+      <div class="modalHead">
+        <h3>➕ Add a task / reminder</h3>
+        <button class="xBtn" data-close="taskModal">✖ Close</button>
+      </div>
+      <div class="modalBody">
+        <div class="formGrid">
+          <div>
+            <label>Task name</label>
+            <input id="taskName" placeholder="e.g., Draw a comic" />
+          </div>
+          <div>
+            <label>Icon</label>
+            <input id="taskIcon" placeholder="e.g., 🎨" />
+          </div>
+          <div>
+            <label>Time (24h)</label>
+            <input id="taskTime" type="time" />
+          </div>
+          <div>
+            <label>Mission (earns stars)?</label>
+            <select id="taskIsMission">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label>Stars if mission</label>
+            <input id="taskStars" type="number" min="0" step="1" value="1" />
+          </div>
+          <div>
+            <label>Reminder</label>
+            <select id="taskReminder">
+              <option value="no">No reminder</option>
+              <option value="yes">Remind at time</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <button class="xBtn danger" id="deleteTodayTasksBtn">🧹 Clear today’s added tasks</button>
+          <button class="xBtn primary" id="saveTaskBtn">✅ Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: Schedule -->
+  <div class="pageBack" id="schedulePage">
+    <div class="page">
+      <div class="pageHeader">
+        <h3>🗓️ Full Schedule (Today)</h3>
+        <button class="xBtn" data-close="schedulePage">✖ Close</button>
+      </div>
+      <div class="pageBody">
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Schedule Timeline</h2>
+              <div class="hint">Full schedule view (read-only).</div>
+            </div>
+            <div class="hint">
+              <span class="tagMini">⭐ 19:00 homework → Uppa can help</span>
+              <span class="tagMini">👨‍👩‍👧 19:45 family time</span>
+            </div>
+          </div>
+          <div class="schedule">
+            <div class="timeline" id="timeline"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Special Days & Weekend Power‑Ups 💥</h2>
+              <div class="hint">Quick cheatsheet.</div>
+            </div>
+            <div class="hint">🌙 Sleep late: Fri+Sat • 😴 Wake late: Sat+Sun</div>
+          </div>
+          <div class="storeWrap">
+            <div id="specialBox"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Reward Shop -->
+  <div class="modalBack" id="rewardModal">
+    <div class="modal">
+      <div class="modalHead">
+        <h3>🛍️ Reward Shop</h3>
+        <button class="xBtn" data-close="rewardModal">✖ Close</button>
+      </div>
+      <div class="modalBody">
+        <div class="hint" style="margin-bottom:10px;">Parent approval required to unlock.</div>
+        <div class="storeGrid" id="rewardGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARENT PAGE -->
+  <div class="pageBack" id="parentPage">
+    <div class="page">
+      <div class="pageHeader">
+        <h3>🔒 Parent Controls</h3>
+        <button class="xBtn" data-close="parentPage">✖ Close</button>
+      </div>
+      <div class="pageBody">
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Parent Mode</h2>
+              <div class="hint">Unlock for 10 minutes to approve rewards.</div>
+            </div>
+            <div class="hint" id="parentPageStatus">Parent: OFF</div>
+          </div>
+          <div class="schedule" style="padding-top:0;">
+            <div class="formGrid">
+              <div>
+                <label>Enter parent code</label>
+                <input id="parentCodeInput" type="password" inputmode="numeric" placeholder="••••" />
+              </div>
+              <div>
+                <label>Action</label>
+                <select id="parentAction">
+                  <option value="unlock">Unlock Parent Mode (10 min)</option>
+                  <option value="set">Set/Change Parent Code</option>
+                </select>
+              </div>
+              <div id="newCodeWrap" style="display:none;">
+                <label>New code</label>
+                <input id="newParentCode" type="password" inputmode="numeric" placeholder="New code" />
+              </div>
+              <div id="confirmCodeWrap" style="display:none;">
+                <label>Confirm new code</label>
+                <input id="confirmParentCode" type="password" inputmode="numeric" placeholder="Confirm" />
+              </div>
+            </div>
+            <div class="row">
+              <button class="xBtn danger" id="lockParentBtn">🔒 Lock now</button>
+              <button class="xBtn primary" id="doParentBtn">✅ Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Reward Shop Setup</h2>
+              <div class="hint">Add rewards or reset the week.</div>
+            </div>
+          </div>
+          <div class="schedule" style="padding-top:0;">
+            <div class="formGrid">
+              <div>
+                <label>Reward name</label>
+                <input id="rewardName" placeholder="e.g., Choose the movie" />
+              </div>
+              <div>
+                <label>Icon</label>
+                <input id="rewardIcon" placeholder="e.g., 🍿" />
+              </div>
+              <div>
+                <label>Cost (stars)</label>
+                <input id="rewardCost" type="number" min="1" step="1" value="10" />
+              </div>
+              <div>
+                <label>Notes (optional)</label>
+                <input id="rewardNote" placeholder="e.g., Friday night" />
+              </div>
+            </div>
+            <div class="row">
+              <button class="xBtn primary" id="saveRewardBtn">✅ Save reward</button>
+              <button class="xBtn danger" id="weeklyResetBtn">🔁 New week</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Purchased Rewards</h2>
+              <div class="hint">Mark rewards as used or clear them.</div>
+            </div>
+          </div>
+          <div class="schedule" style="padding-top:0;">
+            <div class="rewardList" id="parentRewardList"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Standard Schedule Editor</h2>
+              <div class="hint">Edit mission stars, timing, or type.</div>
+            </div>
+          </div>
+          <div class="schedule" style="padding-top:0;">
+            <div class="rewardList" id="parentScheduleList"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Edit Selected Task</h2>
+              <div class="hint">Choose a task above, then save updates.</div>
+            </div>
+          </div>
+          <div class="schedule" style="padding-top:0;">
+            <div class="formGrid">
+              <div>
+                <label>Task name</label>
+                <input id="editTaskName" placeholder="Task name" />
+              </div>
+              <div>
+                <label>Icon</label>
+                <input id="editTaskIcon" placeholder="e.g., 🎨" />
+              </div>
+              <div>
+                <label>Time (24h)</label>
+                <input id="editTaskTime" type="time" />
+              </div>
+              <div>
+                <label>Type</label>
+                <select id="editTaskKind">
+                  <option value="mission">Mission</option>
+                  <option value="routine">Routine</option>
+                </select>
+              </div>
+              <div>
+                <label>Stars (missions)</label>
+                <input id="editTaskStars" type="number" min="0" step="1" value="1" />
+              </div>
+              <div>
+                <label>Notes</label>
+                <input id="editTaskNote" placeholder="Optional note" />
+              </div>
+            </div>
+            <div class="row">
+              <button class="xBtn primary" id="saveTaskEditBtn">✅ Save changes</button>
+              <button class="xBtn danger" id="resetTaskEditBtn">↩️ Reset edits</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /***********************
+     * Helpers (stable IDs)
+     ***********************/
+    const STORE_KEY = "starquest.v1";
+    const nowISODate = () => new Date().toISOString().slice(0,10);
+    const pad2 = (n)=> String(n).padStart(2,"0");
+    const hmToMinutes = (hm)=> { const [h,m]=hm.split(":").map(Number); return h*60+m; };
+    const nowMinutes = ()=> { const d=new Date(); return d.getHours()*60 + d.getMinutes(); };
+    const dayName = (d=new Date())=> d.toLocaleDateString(undefined,{weekday:"long"});
+    const prettyDate = (d=new Date())=> d.toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric"});
+    const stableId = (prefix, time, name)=> (prefix + "|" + time + "|" + name).toLowerCase().replace(/[^a-z0-9|]+/g,"-");
+    const randId = ()=> Math.random().toString(16).slice(2) + Date.now().toString(16);
+
+    function escapeHtml(s){
+      return (s ?? "").toString()
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
+    }
+
+    /***********************
+     * Storage
+     ***********************/
+    function safeLoad(){
+      try{ const raw = localStorage.getItem(STORE_KEY); return raw ? JSON.parse(raw) : null; }
+      catch(e){ return null; }
+    }
+    function safeSave(obj){
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(obj)); }catch(e){}
+    }
+
+    /***********************
+     * Crypto (optional)
+     ***********************/
+    async function sha256(text){
+      if(!window.crypto?.subtle) return null;
+      const enc = new TextEncoder().encode(text);
+      const buf = await crypto.subtle.digest("SHA-256", enc);
+      const arr = Array.from(new Uint8Array(buf));
+      return arr.map(b => b.toString(16).padStart(2,"0")).join("");
+    }
+
+    /***********************
+     * Default state
+     ***********************/
+    const DEFAULT_REWARDS = [
+      { id: "rw1", icon:"🍿", name:"Choose the movie", cost:12, note:"Movie night" },
+      { id: "rw2", icon:"🍰", name:"Pick dessert", cost:10, note:"Dessert boss" },
+      { id: "rw3", icon:"🎮", name:"+15 min screen time", cost:14, note:"Fri or Sat" },
+      { id: "rw4", icon:"🍕", name:"Choose dinner", cost:18, note:"Chef decision" },
+      { id: "rw5", icon:"🧸", name:"Small surprise", cost:25, note:"Tiny toy / sticker pack" },
+      { id: "rw6", icon:"📚", name:"Library + treat", cost:20, note:"Book + fika" },
+      { id: "rw7", icon:"🛝", name:"Extra play time outside", cost:16, note:"Park / walk" },
+      { id: "rw8", icon:"🎨", name:"Craft kit / art time", cost:15, note:"Creative hour" }
+    ];
+
+    function defaultState(){
+      return {
+        stars: 0,
+        rewards: DEFAULT_REWARDS,
+        purchasedRewards: [],
+        scheduleOverrides: {},
+        completedByDate: {},      // { "YYYY-MM-DD": { [taskId]: true } }
+        customTasksByDate: {},    // { "YYYY-MM-DD": [task] }
+        reminders: {},            // { "YYYY-MM-DD": { [taskId]: { at:"HH:MM", fired:false, icon, name } } }
+        parent: {
+          codeHash: null,         // hash if available
+          codePlain: null,        // fallback
+          unlockedUntil: 0
+        }
+      };
+    }
+
+    let state = safeLoad() || defaultState();
+
+    /***********************
+     * UI helpers
+     ***********************/
+    function toast(icon, a, b){
+      const el = document.getElementById("toast");
+      document.getElementById("toastIcon").textContent = icon || "🔔";
+      document.getElementById("toastA").textContent = a || "Hey!";
+      document.getElementById("toastB").textContent = b || "";
+      el.classList.add("show");
+      setTimeout(()=> el.classList.remove("show"), 2600);
+    }
+
+    function popStars(x, y){
+      const emojis = ["⭐","✨","🌟","💫"];
+      for(let i=0;i<14;i++){
+        const s = document.createElement("div");
+        s.className = "spark";
+        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        const dx = (Math.random()*220 - 110);
+        const dy = (Math.random()*-240 - 60);
+        s.style.setProperty("--x0", (x + (Math.random()*20-10)) + "px");
+        s.style.setProperty("--y0", (y + (Math.random()*10-5)) + "px");
+        s.style.setProperty("--x1", (x + dx) + "px");
+        s.style.setProperty("--y1", (y + dy) + "px");
+        s.style.fontSize = (14 + Math.random()*18) + "px";
+        document.body.appendChild(s);
+        setTimeout(()=> s.remove(), 950);
+      }
+    }
+
+    function save(){
+      safeSave(state);
+      renderHUD();
+    }
+
+    function isParentUnlocked(){
+      return (state.parent?.unlockedUntil || 0) > Date.now();
+    }
+
+    /***********************
+     * Schedule
+     ***********************/
+    function makeTask(prefix, time, icon, name, kind, note="", stars=0){
+      return { id: stableId(prefix, time, name), time, icon, name, kind, note, stars };
+    }
+
+    function getOverrides(){
+      if(!state.scheduleOverrides) state.scheduleOverrides = {};
+      return state.scheduleOverrides;
+    }
+
+    function applyOverrides(tasks){
+      const overrides = getOverrides();
+      return tasks.map(task => {
+        const override = overrides[task.id];
+        if(!override) return task;
+        const merged = { ...task, ...override };
+        if(merged.kind !== "mission") merged.stars = 0;
+        return merged;
+      });
+    }
+
+    function baseSchedule(){
+      const p = "base";
+      return [
+        makeTask(p,"07:00","🌞","Wake + wash","routine"),
+        makeTask(p,"07:30","🥣","Breakfast","routine"),
+        makeTask(p,"07:45","🎒","School","routine"),
+        makeTask(p,"14:30","🏠","Home + snack + change","routine"),
+        makeTask(p,"15:00","🍽️","Dishwasher check","routine","Unload/load if needed"),
+        makeTask(p,"15:10","📱","Screen time","routine","Max 1 hour"),
+        makeTask(p,"16:00","🧹","Tidy up","mission","Room + table", 1),
+        makeTask(p,"16:30","🕌","Arabic class","routine","Starts 16:30"),
+        makeTask(p,"17:30","🇸🇪","Swedish reading/practice","mission","30 minutes", 2),
+        makeTask(p,"18:00","🍽️","Dinner","routine"),
+        makeTask(p,"18:30","🎨","Flexible time","routine","Hobbies / piano / creative"),
+        makeTask(p,"19:00","✏️","Homework / learning","mission","Uppa can help 🤝", 2),
+        makeTask(p,"19:45","👨‍👩‍👧","Family time","mission","Ideally together 💛", 1),
+        makeTask(p,"20:30","🍽️","Dishwasher check","routine","Unload/load if needed"),
+        makeTask(p,"20:45","🛁","Shower + bedtime prep","routine"),
+        makeTask(p,"21:00","📖","Read + lights out","mission","Relax & sleep", 1)
+      ];
+    }
+
+    function withSpecials(items, date = new Date()){
+      const d = new Date(date);
+      const wd = d.getDay(); // 0 Sun, 1 Mon...
+      const today = nowISODate();
+
+      const custom = (state.customTasksByDate[today] || []).map(t => ({...t}));
+      let out = [...items, ...custom];
+
+      if(wd === 3){
+        out.push(makeTask("wed","17:15","🎹","Piano lesson","routine","17:15–18:30"));
+        out.push(makeTask("wed","19:10","🤖","Jaanu (robot vacuum)","mission","After dinner", 1));
+      }
+      if(wd === 4){
+        out.push(makeTask("thu","18:30","🏊","Swimming","routine","18:30–20:30"));
+      }
+      if(wd === 0 || wd === 6){
+        out.push(makeTask("wknd","11:00","🧺","Fold & put away clothes","mission","Weekend power-up", 1));
+        out.push(makeTask("wknd","11:15","🎹","Piano practice","mission","10–20 minutes", 1));
+        out.push(makeTask("wknd","11:40","🎨","Creative time","mission","Crafts / drawing / LEGO", 1));
+        out.push(makeTask("wknd","12:10","🧼","Deep shower + hygiene","mission","Weekend reset", 1));
+        if(wd === 6){
+          out.push(makeTask("sat","11:00","🤖","Jaanu (robot vacuum)","mission","Saturday ~11:00", 1));
+        }
+        if(wd === 0){
+          out.push(makeTask("sun","09:30","🏊","Swimming","routine","09:30–11:30"));
+          out.push(makeTask("sun","18:30","🎒","School prep","mission","Bag + clothes + bottle", 1));
+        }
+      }
+
+      out = applyOverrides(out);
+      out.sort((a,b)=> hmToMinutes(a.time) - hmToMinutes(b.time));
+      return out;
+    }
+
+    function todaySchedule(){
+      return withSpecials(baseSchedule(), new Date());
+    }
+
+    /***********************
+     * Completion & stars
+     ***********************/
+    function completedMapForToday(){
+      const key = nowISODate();
+      if(!state.completedByDate[key]) state.completedByDate[key] = {};
+      return state.completedByDate[key];
+    }
+
+    function isDone(taskId){
+      const m = completedMapForToday();
+      return !!m[taskId];
+    }
+
+    function toggleDone(t, elemForStars = null){
+      const m = completedMapForToday();
+      if(m[t.id]){
+        delete m[t.id];
+        if(t.kind === "mission" && t.stars > 0){
+          state.stars = Math.max(0, state.stars - t.stars);
+          toast("↩️","Unmarked", `${t.name} (-${t.stars} ⭐)`);
+        }else{
+          toast("↩️","Unmarked", t.name);
+        }
+        save();
+        renderAll();
+        return;
+      }
+      markDone(t, elemForStars);
+    }
+
+    function markDone(t, elemForStars = null){
+      const m = completedMapForToday();
+      if(m[t.id]) return;
+      m[t.id] = true;
+
+      if(t.kind === "mission" && t.stars > 0){
+        state.stars += t.stars;
+        const rect = (elemForStars ? elemForStars.getBoundingClientRect() : null);
+        const x = rect ? (rect.left + rect.width/2) : (window.innerWidth/2);
+        const y = rect ? (rect.top + 10) : (window.innerHeight/2);
+        popStars(x, y);
+        toast("⭐", "Stars earned!", `+${t.stars} ⭐ for "${t.name}"`);
+      }else{
+        toast(t.icon || "✅", "Done!", t.name);
+      }
+
+      save();
+      renderAll();
+    }
+
+    /***********************
+     * Streak (simple)
+     * day counts if >=2 completed items (kept simple for kids)
+     ***********************/
+    function calcStreak(){
+      let streak = 0;
+      let d = new Date();
+      for(;;){
+        const k = d.toISOString().slice(0,10);
+        const map = state.completedByDate[k] || {};
+        const count = Object.keys(map).length;
+        if(count >= 2){
+          streak += 1;
+          d.setDate(d.getDate()-1);
+        }else{
+          break;
+        }
+      }
+      return streak;
+    }
+
+    /***********************
+     * Reminders (in-app)
+     ***********************/
+    function ensureReminderStore(){
+      const key = nowISODate();
+      if(!state.reminders[key]) state.reminders[key] = {};
+      return state.reminders[key];
+    }
+
+    function scheduleReminder(taskObj, atHM){
+      const r = ensureReminderStore();
+      r[taskObj.id] = { at: atHM, fired: false, icon: taskObj.icon, name: taskObj.name };
+      save();
+      toast("🔔", "Reminder set", `${taskObj.name} at ${atHM}`);
+    }
+
+    function reminderLoop(){
+      const key = nowISODate();
+      const r = state.reminders[key];
+      if(!r) return;
+      const nowM = nowMinutes();
+      for(const rem of Object.values(r)){
+        if(rem.fired) continue;
+        if(hmToMinutes(rem.at) <= nowM){
+          rem.fired = true;
+          save();
+          toast(rem.icon || "🔔", "Reminder!", rem.name);
+        }
+      }
+    }
+
+    /***********************
+     * Rendering
+     ***********************/
+    let cachedSchedule = [];
+    let selectedTaskId = null;
+
+    function renderHUD(){
+      document.getElementById("starBalance").textContent = state.stars;
+      document.getElementById("streak").textContent = calcStreak();
+      const parentLabel = "Parent: " + (isParentUnlocked() ? "ON ✅" : "OFF");
+      const parentPageStatus = document.getElementById("parentPageStatus");
+      if(parentPageStatus) parentPageStatus.textContent = parentLabel;
+    }
+
+    function renderTime(){
+      const d = new Date();
+      const h = d.getHours();
+      const m = d.getMinutes();
+      document.getElementById("timeNow").textContent = `${pad2(h)}:${pad2(m)}`;
+      document.getElementById("ampm").textContent = h < 12 ? "AM" : "PM";
+      document.getElementById("dateNow").textContent = prettyDate(d);
+      document.getElementById("dayLabel").textContent = dayName(d);
+
+      const wd = d.getDay();
+      const special = (wd===3 || wd===4 || wd===0 || wd===6);
+      document.getElementById("specialChip").style.display = special ? "inline-flex" : "none";
+    }
+
+    function findCurrentTask(schedule){
+      const nowM = nowMinutes();
+      let current = schedule[0];
+      for(const t of schedule){
+        if(hmToMinutes(t.time) <= nowM) current = t;
+        else break;
+      }
+      let next = null;
+      for(const t of schedule){
+        if(hmToMinutes(t.time) > nowM){ next = t; break; }
+      }
+      return { current, next };
+    }
+
+    function renderNowBox(){
+      const { current, next } = findCurrentTask(cachedSchedule);
+      window.__currentTaskId = current?.id || null;
+
+      document.getElementById("nowIcon").textContent = current?.icon || "🎯";
+      document.getElementById("nowTask").textContent = current?.name || "—";
+      document.getElementById("nowMeta").textContent =
+        current?.note ? current.note : (current?.kind==="mission" ? `Mission • ⭐ ${current.stars}` : "Routine");
+
+      const nextIn = document.getElementById("nextIn");
+      if(next){
+        const diff = hmToMinutes(next.time) - nowMinutes();
+        nextIn.innerHTML = `Next: <b>${escapeHtml(next.icon)} ${escapeHtml(next.name)}</b><br><span style="color:var(--muted); font-weight:950;">in ${diff} min</span>`;
+      }else{
+        nextIn.textContent = "Last task of the day ✅";
+      }
+    }
+
+    function renderMissions(){
+      const grid = document.getElementById("missionGrid");
+      grid.innerHTML = "";
+      const missions = cachedSchedule.filter(t => t.kind === "mission");
+      document.getElementById("missionCount").textContent = `${missions.length} missions`;
+
+      for(const t of missions){
+        const div = document.createElement("div");
+        div.className = "mission" + (isDone(t.id) ? " done" : "");
+        div.innerHTML = `
+          <div class="mIcon">${escapeHtml(t.icon)}</div>
+          <div class="mText">
+            <div class="t">${escapeHtml(t.name)}</div>
+            <div class="p">
+              <span class="tagMini">${escapeHtml(t.time)}</span>
+              <span class="tagMini">${escapeHtml(t.note || "Mission")}</span>
+            </div>
+          </div>
+          <div class="stars">+${t.stars} ⭐</div>
+        `;
+        div.addEventListener("click", ()=>{
+          toggleDone(t, div);
+        });
+        grid.appendChild(div);
+      }
+    }
+
+    function renderSchedule(readOnly = false){
+      const tl = document.getElementById("timeline");
+      tl.innerHTML = "";
+
+      const nowM = nowMinutes();
+      let currentId = null;
+      for(const t of cachedSchedule){
+        if(hmToMinutes(t.time) <= nowM) currentId = t.id;
+        else break;
+      }
+
+      for(const t of cachedSchedule){
+        const done = isDone(t.id);
+        const row = document.createElement("div");
+        row.className = "item" + (t.id === currentId ? " nowGlow" : "") + (done ? " itemDone" : "");
+        const tags = [];
+        if(t.kind === "mission") tags.push(`⭐ +${t.stars}`);
+        if(t.note) tags.push(t.note);
+
+        row.innerHTML = `
+          <div class="tbox">${escapeHtml(t.time)}</div>
+          <div class="iIcon">${escapeHtml(t.icon)}</div>
+          <div class="iText">
+            <div class="name">${escapeHtml(t.name)}</div>
+            <div class="meta">${tags.slice(0,3).map(x => `<span class="tagMini">${escapeHtml(x)}</span>`).join("")}</div>
+          </div>
+          <div style="font-size:18px; opacity:.9;">${done ? "✅" : "⬜️"}</div>
+        `;
+
+        if(!readOnly){
+          row.addEventListener("click", ()=>{
+            if(done){
+              toast("✅","Done already","(Undo is not enabled — kids are too clever.)");
+              return;
+            }
+            markDone(t, row);
+          });
+        }
+
+        tl.appendChild(row);
+      }
+
+      renderNowBox();
+    }
+
+    function renderRewardShop(){
+      const grid = document.getElementById("rewardGrid");
+      grid.innerHTML = "";
+      const parentOn = isParentUnlocked();
+
+      for(const r of state.rewards){
+        const card = document.createElement("div");
+        card.className = "reward";
+        const canAfford = state.stars >= r.cost;
+        const btnDisabled = !(parentOn && canAfford);
+
+        card.innerHTML = `
+          <div class="rIcon">${escapeHtml(r.icon || "🎁")}</div>
+          <div class="rText">
+            <div class="t">${escapeHtml(r.name)}</div>
+            <div class="p">
+              <span class="tagMini">${escapeHtml(r.note || "Reward")}</span>
+              <span class="cost">${r.cost} ⭐</span>
+            </div>
+          </div>
+          <button class="redeemBtn" ${btnDisabled ? "disabled" : ""}>${parentOn ? (canAfford ? "Unlock" : "Need ⭐") : "Parent 🔒"}</button>
+        `;
+
+        const btn = card.querySelector(".redeemBtn");
+        btn.addEventListener("click", (ev)=>{
+          ev.stopPropagation();
+          if(!isParentUnlocked()){
+            toast("🔒","Parent needed","Ask Uppa to unlock Parent Mode.");
+            return;
+          }
+          if(state.stars < r.cost){
+            toast("⭐","Not enough stars", `Need ${r.cost - state.stars} more ⭐`);
+            return;
+          }
+
+          state.stars -= r.cost;
+          state.purchasedRewards.unshift({
+            id: "pr|" + randId(),
+            name: r.name,
+            icon: r.icon,
+            note: r.note,
+            cost: r.cost,
+            redeemedAt: new Date().toISOString(),
+            used: false
+          });
+          save();
+          popStars(window.innerWidth/2, window.innerHeight - 120);
+          toast("🎁","Reward unlocked!", `"${r.name}" approved ✅`);
+          renderRewardShop();
+          renderPurchasedRewards();
+          renderHUD();
+        });
+
+        // long-press delete (parent mode)
+        let timer = null;
+        const start = ()=>{
+          if(!isParentUnlocked()) return;
+          timer = setTimeout(()=>{
+            if(confirm(`Delete reward "${r.name}"?`)){
+              state.rewards = state.rewards.filter(x => x.id !== r.id);
+              save();
+              renderRewardShop();
+            }
+          }, 700);
+        };
+        const stop = ()=> timer && clearTimeout(timer);
+
+        card.addEventListener("touchstart", start, {passive:true});
+        card.addEventListener("touchend", stop);
+        card.addEventListener("mousedown", start);
+        card.addEventListener("mouseup", stop);
+        card.addEventListener("mouseleave", stop);
+
+        grid.appendChild(card);
+      }
+    }
+
+    function renderPurchasedRewards(){
+      const earnedGrid = document.getElementById("earnedRewardGrid");
+      const parentGrid = document.getElementById("parentRewardList");
+      if(earnedGrid){
+        earnedGrid.innerHTML = "";
+        if(!state.purchasedRewards.length){
+          earnedGrid.innerHTML = `<div class="hint">No rewards unlocked yet. ⭐</div>`;
+        }else{
+          for(const reward of state.purchasedRewards){
+            const item = document.createElement("div");
+            item.className = "rewardItem" + (reward.used ? " used" : "");
+            item.innerHTML = `
+              <div class="rIcon">${escapeHtml(reward.icon || "🎁")}</div>
+              <div class="rText">
+                <div class="t">${escapeHtml(reward.name)}</div>
+                <div class="rewardMeta">
+                  <span class="tagMini">${escapeHtml(reward.note || "Reward")}</span>
+                  <span class="cost">${reward.cost} ⭐</span>
+                </div>
+              </div>
+              <div class="rewardStatus">${reward.used ? "Used" : "Active"}</div>
+            `;
+            earnedGrid.appendChild(item);
+          }
+        }
+      }
+
+      if(parentGrid){
+        parentGrid.innerHTML = "";
+        if(!state.purchasedRewards.length){
+          parentGrid.innerHTML = `<div class="hint">No purchased rewards yet.</div>`;
+        }else{
+          for(const reward of state.purchasedRewards){
+            const row = document.createElement("div");
+            row.className = "rewardItem" + (reward.used ? " used" : "");
+            row.innerHTML = `
+              <div class="rIcon">${escapeHtml(reward.icon || "🎁")}</div>
+              <div class="rText">
+                <div class="t">${escapeHtml(reward.name)}</div>
+                <div class="rewardMeta">
+                  <span class="tagMini">${escapeHtml(reward.note || "Reward")}</span>
+                  <span class="cost">${reward.cost} ⭐</span>
+                </div>
+              </div>
+              <button class="softBtn">${reward.used ? "Mark active" : "Mark used"}</button>
+            `;
+            const btn = row.querySelector("button");
+            btn.addEventListener("click", ()=>{
+              if(!isParentUnlocked()){
+                toast("🔒","Parent needed","Unlock Parent Mode first.");
+                return;
+              }
+              reward.used = !reward.used;
+              save();
+              renderPurchasedRewards();
+              renderHUD();
+            });
+            parentGrid.appendChild(row);
+          }
+        }
+      }
+    }
+
+    function renderParentScheduleList(){
+      const list = document.getElementById("parentScheduleList");
+      if(!list) return;
+      const tasks = applyOverrides(baseSchedule());
+      list.innerHTML = "";
+      for(const task of tasks){
+        const row = document.createElement("div");
+        row.className = "rewardItem";
+        row.innerHTML = `
+          <div class="rIcon">${escapeHtml(task.icon || "🗓️")}</div>
+          <div class="rText">
+            <div class="t">${escapeHtml(task.name)}</div>
+            <div class="rewardMeta">
+              <span class="tagMini">${escapeHtml(task.time)}</span>
+              <span class="tagMini">${escapeHtml(task.kind)}</span>
+              ${task.kind === "mission" ? `<span class="cost">⭐ ${task.stars}</span>` : ""}
+            </div>
+          </div>
+          <button class="softBtn" data-task-id="${escapeHtml(task.id)}">Edit</button>
+        `;
+        const btn = row.querySelector("button");
+        btn.addEventListener("click", ()=>{
+          if(!isParentUnlocked()){
+            toast("🔒","Parent needed","Unlock Parent Mode first.");
+            return;
+          }
+          selectedTaskId = task.id;
+          document.getElementById("editTaskName").value = task.name || "";
+          document.getElementById("editTaskIcon").value = task.icon || "";
+          document.getElementById("editTaskTime").value = task.time || "";
+          document.getElementById("editTaskKind").value = task.kind || "routine";
+          document.getElementById("editTaskStars").value = String(task.stars ?? 0);
+          document.getElementById("editTaskNote").value = task.note || "";
+        });
+        list.appendChild(row);
+      }
+    }
+
+    function renderSpecialBox(){
+      const box = document.getElementById("specialBox");
+      box.innerHTML = `
+        <div style="display:grid; gap:10px;">
+          <div style="border:1px solid rgba(11,16,32,.08); border-radius:18px; padding:12px; background:rgba(255,255,255,.82); box-shadow:0 16px 30px rgba(11,16,32,.08);">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <div style="font-weight:1100;">🎹 Wednesday</div>
+              <div class="tagMini">Piano 17:15</div>
+            </div>
+            <div class="hint" style="margin-top:6px;">Also: 🤖 Jaanu after dinner.</div>
+          </div>
+
+          <div style="border:1px solid rgba(11,16,32,.08); border-radius:18px; padding:12px; background:rgba(255,255,255,.82); box-shadow:0 16px 30px rgba(11,16,32,.08);">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <div style="font-weight:1100;">🏊 Thursday</div>
+              <div class="tagMini">Swimming 18:30</div>
+            </div>
+            <div class="hint" style="margin-top:6px;">Rest stays usual.</div>
+          </div>
+
+          <div style="border:1px solid rgba(11,16,32,.08); border-radius:18px; padding:12px; background:rgba(255,255,255,.82); box-shadow:0 16px 30px rgba(11,16,32,.08);">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <div style="font-weight:1100;">🎯 Weekend</div>
+              <div class="tagMini">Sat + Sun</div>
+            </div>
+            <div class="hint" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+              <span class="tagMini">🧺 Fold & put away clothes</span>
+              <span class="tagMini">🎹 Piano practice</span>
+              <span class="tagMini">🇸🇪 Swedish 30 min</span>
+              <span class="tagMini">🎨 Creative time</span>
+              <span class="tagMini">🧼 Deep shower + hygiene</span>
+              <span class="tagMini">🤖 Jaanu: Saturday ~11:00</span>
+              <span class="tagMini">🏊 Swimming: Sunday 09:30</span>
+              <span class="tagMini">🎒 Sunday: school prep</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAll(){
+      renderTime();
+      renderHUD();
+      renderMissions();
+      renderSchedule();
+      renderRewardShop();
+      renderPurchasedRewards();
+      renderParentScheduleList();
+      renderSpecialBox();
+    }
+
+    function refreshScheduleCache(){
+      cachedSchedule = todaySchedule();
+    }
+
+    /***********************
+     * Modals
+     ***********************/
+    function showModal(id){ document.getElementById(id).classList.add("show"); }
+    function hideModal(id){ document.getElementById(id).classList.remove("show"); }
+
+    document.querySelectorAll("[data-close]").forEach(b=>{
+      b.addEventListener("click", ()=> hideModal(b.getAttribute("data-close")));
+    });
+
+    // Add task
+    document.getElementById("addTaskBtn").addEventListener("click", ()=> showModal("taskModal"));
+    document.getElementById("openScheduleBtn").addEventListener("click", ()=>{
+      renderSchedule(true);
+      renderSpecialBox();
+      showModal("schedulePage");
+    });
+    document.getElementById("openShopBtn").addEventListener("click", ()=>{
+      renderRewardShop();
+      showModal("rewardModal");
+    });
+    document.getElementById("saveTaskBtn").addEventListener("click", ()=>{
+      const name = document.getElementById("taskName").value.trim();
+      const icon = document.getElementById("taskIcon").value.trim() || "🧩";
+      const time = document.getElementById("taskTime").value || "";
+      const isMission = document.getElementById("taskIsMission").value === "yes";
+      const stars = parseInt(document.getElementById("taskStars").value || "0", 10);
+      const reminder = document.getElementById("taskReminder").value === "yes";
+
+      if(!name || !time){
+        toast("⚠️","Missing info","Add task name + time.");
+        return;
+      }
+
+      const t = { id: "custom|" + randId(), time, icon, name, kind: isMission ? "mission" : "routine", note: "Added", stars: isMission ? Math.max(0,stars) : 0, added:true };
+      const key = nowISODate();
+      if(!state.customTasksByDate[key]) state.customTasksByDate[key] = [];
+      state.customTasksByDate[key].push(t);
+
+      if(reminder) scheduleReminder(t, time);
+
+      // reset
+      document.getElementById("taskName").value = "";
+      document.getElementById("taskIcon").value = "";
+      document.getElementById("taskTime").value = "";
+      document.getElementById("taskIsMission").value = "no";
+      document.getElementById("taskStars").value = "1";
+      document.getElementById("taskReminder").value = "no";
+
+      save();
+      hideModal("taskModal");
+      refreshScheduleCache();
+      renderAll();
+      toast("➕","Added!", `${t.icon} ${t.name} at ${t.time}`);
+    });
+
+    document.getElementById("deleteTodayTasksBtn").addEventListener("click", ()=>{
+      const key = nowISODate();
+      if(confirm("Clear today's added tasks?")){
+        state.customTasksByDate[key] = [];
+        state.reminders[key] = {};
+        save();
+        hideModal("taskModal");
+        refreshScheduleCache();
+        renderAll();
+        toast("🧹","Cleared","Today's added tasks removed.");
+      }
+    });
+
+    // Parent
+    document.getElementById("parentBtn").addEventListener("click", ()=>{
+      if(isParentUnlocked()){
+        renderHUD();
+        renderPurchasedRewards();
+        renderParentScheduleList();
+        showModal("parentPage");
+        return;
+      }
+      showModal("parentGateModal");
+    });
+    document.getElementById("parentGateUnlockBtn").addEventListener("click", async ()=>{
+      const hasCode = state.parent.codeHash || state.parent.codePlain;
+      if(!hasCode){
+        toast("🔧","Set Parent Code","Use Parent Controls to create a code.");
+        showModal("parentPage");
+        return;
+      }
+      const code = document.getElementById("parentGateInput").value.trim();
+      if(!code){
+        toast("⚠️","Enter code","Please type the parent code.");
+        return;
+      }
+      if(state.parent.codeHash){
+        const h = await sha256(code);
+        if(!h || h !== state.parent.codeHash){
+          toast("❌","Wrong code","Try again.");
+          return;
+        }
+      }else if(state.parent.codePlain){
+        if(code !== state.parent.codePlain){
+          toast("❌","Wrong code","Try again.");
+          return;
+        }
+      }
+      state.parent.unlockedUntil = Date.now() + 10*60*1000;
+      save();
+      document.getElementById("parentGateInput").value = "";
+      hideModal("parentGateModal");
+      renderHUD();
+      renderPurchasedRewards();
+      renderParentScheduleList();
+      showModal("parentPage");
+    });
+    document.getElementById("parentGateSetupBtn").addEventListener("click", ()=>{
+      hideModal("parentGateModal");
+      document.getElementById("parentAction").value = "set";
+      document.getElementById("newCodeWrap").style.display = "block";
+      document.getElementById("confirmCodeWrap").style.display = "block";
+      showModal("parentPage");
+    });
+    document.getElementById("parentAction").addEventListener("change", (e)=>{
+      const isSet = e.target.value === "set";
+      document.getElementById("newCodeWrap").style.display = isSet ? "block" : "none";
+      document.getElementById("confirmCodeWrap").style.display = isSet ? "block" : "none";
+    });
+
+    document.getElementById("lockParentBtn").addEventListener("click", ()=>{
+      state.parent.unlockedUntil = 0;
+      save();
+      hideModal("parentPage");
+      toast("🔒","Locked","Parent Mode OFF");
+    });
+
+    document.getElementById("doParentBtn").addEventListener("click", async ()=>{
+      const action = document.getElementById("parentAction").value;
+      const code = document.getElementById("parentCodeInput").value.trim();
+
+      if(action === "unlock"){
+        if(state.parent.codeHash){
+          const h = await sha256(code);
+          if(!h || h !== (state.parent.codeHash || "")){
+            toast("❌","Wrong code","Try again.");
+            return;
+          }
+        }else if(state.parent.codePlain){
+          if(code !== state.parent.codePlain){
+            toast("❌","Wrong code","Try again.");
+            return;
+          }
+        }else{
+          toast("🔧","Set code first","Choose 'Set/Change Parent Code'.");
+          return;
+        }
+        state.parent.unlockedUntil = Date.now() + 10*60*1000;
+        save();
+        hideModal("parentPage");
+        toast("🔓","Parent Mode ON","10 minutes unlocked.");
+        return;
+      }
+
+      // set/change
+      const newCode = document.getElementById("newParentCode").value.trim();
+      const confirmCode = document.getElementById("confirmParentCode").value.trim();
+      if(newCode.length < 4){
+        toast("⚠️","Too short","Use at least 4 digits.");
+        return;
+      }
+      if(newCode !== confirmCode){
+        toast("⚠️","Codes differ","Confirm must match.");
+        return;
+      }
+
+      // verify old if set
+      if(state.parent.codeHash){
+        const hOld = await sha256(code);
+        if(!hOld || hOld !== state.parent.codeHash){
+          toast("❌","Wrong current code","Enter the existing code first.");
+          return;
+        }
+      }else if(state.parent.codePlain){
+        if(code !== state.parent.codePlain){
+          toast("❌","Wrong current code","Enter the existing code first.");
+          return;
+        }
+      }
+
+      const hNew = await sha256(newCode);
+      if(hNew){
+        state.parent.codeHash = hNew;
+        state.parent.codePlain = null;
+      }else{
+        // fallback
+        state.parent.codePlain = newCode;
+        state.parent.codeHash = null;
+        toast("⚠️","FYI","Secure hashing not available here. Still works, but less secure.");
+      }
+
+      state.parent.unlockedUntil = Date.now() + 10*60*1000;
+      save();
+      hideModal("parentPage");
+      toast("✅","Parent code set","Parent Mode ON for 10 min.");
+
+      document.getElementById("parentCodeInput").value = "";
+      document.getElementById("newParentCode").value = "";
+      document.getElementById("confirmParentCode").value = "";
+    });
+
+    document.getElementById("saveRewardBtn").addEventListener("click", ()=>{
+      if(!isParentUnlocked()){
+        toast("🔒","Parent needed","Unlock Parent Mode first.");
+        return;
+      }
+      const name = document.getElementById("rewardName").value.trim();
+      const icon = document.getElementById("rewardIcon").value.trim() || "🎁";
+      const cost = parseInt(document.getElementById("rewardCost").value || "1", 10);
+      const note = document.getElementById("rewardNote").value.trim();
+
+      if(!name || !cost || cost < 1){
+        toast("⚠️","Missing info","Add reward name + cost.");
+        return;
+      }
+      state.rewards.push({ id: "rw|" + randId(), name, icon, cost, note });
+      save();
+      renderRewardShop();
+      renderPurchasedRewards();
+      renderParentScheduleList();
+      toast("🎁","Reward added", `${icon} ${name} (${cost}⭐)`);
+
+      document.getElementById("rewardName").value = "";
+      document.getElementById("rewardIcon").value = "";
+      document.getElementById("rewardCost").value = "10";
+      document.getElementById("rewardNote").value = "";
+    });
+
+    document.getElementById("saveTaskEditBtn").addEventListener("click", ()=>{
+      if(!isParentUnlocked()){
+        toast("🔒","Parent needed","Unlock Parent Mode first.");
+        return;
+      }
+      if(!selectedTaskId){
+        toast("⚠️","No task selected","Choose a task to edit first.");
+        return;
+      }
+      const name = document.getElementById("editTaskName").value.trim();
+      const icon = document.getElementById("editTaskIcon").value.trim();
+      const time = document.getElementById("editTaskTime").value;
+      const kind = document.getElementById("editTaskKind").value;
+      const stars = parseInt(document.getElementById("editTaskStars").value || "0", 10);
+      const note = document.getElementById("editTaskNote").value.trim();
+
+      if(!name || !time){
+        toast("⚠️","Missing info","Task name and time are required.");
+        return;
+      }
+
+      const overrides = getOverrides();
+      overrides[selectedTaskId] = {
+        name,
+        icon,
+        time,
+        kind,
+        stars: kind === "mission" ? Math.max(0, stars) : 0,
+        note
+      };
+      save();
+      refreshScheduleCache();
+      renderAll();
+      toast("✅","Schedule updated","Changes saved.");
+    });
+
+    document.getElementById("resetTaskEditBtn").addEventListener("click", ()=>{
+      if(!isParentUnlocked()){
+        toast("🔒","Parent needed","Unlock Parent Mode first.");
+        return;
+      }
+      if(!selectedTaskId){
+        toast("⚠️","No task selected","Choose a task to reset first.");
+        return;
+      }
+      const overrides = getOverrides();
+      delete overrides[selectedTaskId];
+      save();
+      refreshScheduleCache();
+      renderAll();
+      toast("↩️","Reset","Task reverted to default.");
+    });
+
+    // Weekly reset (parent only)
+    document.getElementById("weeklyResetBtn").addEventListener("click", ()=>{
+      if(!isParentUnlocked()){
+        toast("🔒","Parent needed","Unlock Parent Mode first.");
+        return;
+      }
+      if(confirm("Start a new week? (Clears completions + reminders. Stars stay.)")){
+        state.completedByDate = {};
+        state.reminders = {};
+        save();
+        refreshScheduleCache();
+        renderAll();
+        toast("🔁","New week","Fresh start ✅");
+      }
+    });
+
+    // Mark NOW done
+    document.getElementById("markNowDoneBtn").addEventListener("click", ()=>{
+      const id = window.__currentTaskId;
+      const t = cachedSchedule.find(x => x.id === id);
+      if(!t){ toast("⚠️","No task","Nothing to mark right now."); return; }
+      toggleDone(t, document.getElementById("markNowDoneBtn"));
+    });
+
+    // Nudge reminder for NOW (+5 min)
+    document.getElementById("nudgeBtn").addEventListener("click", ()=>{
+      const id = window.__currentTaskId;
+      const t = cachedSchedule.find(x => x.id === id);
+      if(!t){ toast("⚠️","No task","Nothing to remind."); return; }
+      const d = new Date();
+      d.setMinutes(d.getMinutes()+5);
+      const at = pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+      scheduleReminder(t, at);
+    });
+
+    /***********************
+     * Init + loops
+     ***********************/
+    function tick(){
+      renderTime();
+      renderNowBox();
+      reminderLoop();
+      renderHUD();
+    }
+
+    refreshScheduleCache();
+    renderAll();
+    tick();
+    setInterval(tick, 15000);
+
+    if(!state.parent.codeHash && !state.parent.codePlain){
+      setTimeout(()=> toast("🔧","Set Parent Code", "Tap 🔒 Parent → Set/Change Parent Code."), 900);
+    }
+  </script>
+</body>
+</html>
