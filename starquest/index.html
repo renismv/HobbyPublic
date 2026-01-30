@@ -561,7 +561,7 @@
       z-index: 1100;
       overflow:auto;
       padding: 14px;
-      align-items:flex-start;
+      align-items:center;
     }
     .pageBack.show{ display:flex; }
     .page{
@@ -573,7 +573,7 @@
       box-shadow: 0 30px 70px rgba(0,0,0,.30);
       overflow:hidden;
       backdrop-filter: var(--glass);
-      max-height: calc(100vh - 28px);
+      height: calc(100vh - 28px);
       display:flex;
       flex-direction:column;
     }
@@ -594,6 +594,7 @@
       display:grid;
       gap:12px;
       overflow:auto;
+      max-height: calc(100vh - 140px);
     }
     /* Confetti */
     .spark{
@@ -731,7 +732,6 @@
               <div class="hint">Unlocked rewards show up here.</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
-              <div class="hint" id="parentStatus">Parent: OFF</div>
               <button class="softBtn" id="openShopBtn">🛍️ Reward shop</button>
             </div>
           </div>
@@ -1243,6 +1243,23 @@
       return !!m[taskId];
     }
 
+    function toggleDone(t, elemForStars = null){
+      const m = completedMapForToday();
+      if(m[t.id]){
+        delete m[t.id];
+        if(t.kind === "mission" && t.stars > 0){
+          state.stars = Math.max(0, state.stars - t.stars);
+          toast("↩️","Unmarked", `${t.name} (-${t.stars} ⭐)`);
+        }else{
+          toast("↩️","Unmarked", t.name);
+        }
+        save();
+        renderAll();
+        return;
+      }
+      markDone(t, elemForStars);
+    }
+
     function markDone(t, elemForStars = null){
       const m = completedMapForToday();
       if(m[t.id]) return;
@@ -1325,7 +1342,6 @@
       document.getElementById("starBalance").textContent = state.stars;
       document.getElementById("streak").textContent = calcStreak();
       const parentLabel = "Parent: " + (isParentUnlocked() ? "ON ✅" : "OFF");
-      document.getElementById("parentStatus").textContent = parentLabel;
       const parentPageStatus = document.getElementById("parentPageStatus");
       if(parentPageStatus) parentPageStatus.textContent = parentLabel;
     }
@@ -1397,11 +1413,7 @@
           <div class="stars">+${t.stars} ⭐</div>
         `;
         div.addEventListener("click", ()=>{
-          if(isDone(t.id)){
-            toast("✅","Already done", t.name);
-            return;
-          }
-          markDone(t, div);
+          toggleDone(t, div);
         });
         grid.appendChild(div);
       }
@@ -1993,8 +2005,7 @@
       const id = window.__currentTaskId;
       const t = cachedSchedule.find(x => x.id === id);
       if(!t){ toast("⚠️","No task","Nothing to mark right now."); return; }
-      if(isDone(t.id)){ toast("✅","Already done", t.name); return; }
-      markDone(t, document.getElementById("markNowDoneBtn"));
+      toggleDone(t, document.getElementById("markNowDoneBtn"));
     });
 
     // Nudge reminder for NOW (+5 min)
