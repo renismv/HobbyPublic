@@ -561,6 +561,7 @@
       z-index: 1100;
       overflow:auto;
       padding: 14px;
+      align-items:flex-start;
     }
     .pageBack.show{ display:flex; }
     .page{
@@ -572,6 +573,9 @@
       box-shadow: 0 30px 70px rgba(0,0,0,.30);
       overflow:hidden;
       backdrop-filter: var(--glass);
+      max-height: calc(100vh - 28px);
+      display:flex;
+      flex-direction:column;
     }
     .pageHeader{
       padding: 14px;
@@ -585,7 +589,12 @@
         linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.88));
       border-bottom: 1px solid rgba(11,16,32,.08);
     }
-    .pageBody{ padding: 14px; display:grid; gap:12px; }
+    .pageBody{
+      padding: 14px;
+      display:grid;
+      gap:12px;
+      overflow:auto;
+    }
     /* Confetti */
     .spark{
       position: fixed; top:0; left:0;
@@ -937,6 +946,62 @@
             <div class="rewardList" id="parentRewardList"></div>
           </div>
         </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Standard Schedule Editor</h2>
+              <div class="hint">Edit mission stars, timing, or type.</div>
+            </div>
+          </div>
+          <div class="schedule" style="padding-top:0;">
+            <div class="rewardList" id="parentScheduleList"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Edit Selected Task</h2>
+              <div class="hint">Choose a task above, then save updates.</div>
+            </div>
+          </div>
+          <div class="schedule" style="padding-top:0;">
+            <div class="formGrid">
+              <div>
+                <label>Task name</label>
+                <input id="editTaskName" placeholder="Task name" />
+              </div>
+              <div>
+                <label>Icon</label>
+                <input id="editTaskIcon" placeholder="e.g., 🎨" />
+              </div>
+              <div>
+                <label>Time (24h)</label>
+                <input id="editTaskTime" type="time" />
+              </div>
+              <div>
+                <label>Type</label>
+                <select id="editTaskKind">
+                  <option value="mission">Mission</option>
+                  <option value="routine">Routine</option>
+                </select>
+              </div>
+              <div>
+                <label>Stars (missions)</label>
+                <input id="editTaskStars" type="number" min="0" step="1" value="1" />
+              </div>
+              <div>
+                <label>Notes</label>
+                <input id="editTaskNote" placeholder="Optional note" />
+              </div>
+            </div>
+            <div class="row">
+              <button class="xBtn primary" id="saveTaskEditBtn">✅ Save changes</button>
+              <button class="xBtn danger" id="resetTaskEditBtn">↩️ Reset edits</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1005,6 +1070,7 @@
         stars: 0,
         rewards: DEFAULT_REWARDS,
         purchasedRewards: [],
+        scheduleOverrides: {},
         completedByDate: {},      // { "YYYY-MM-DD": { [taskId]: true } }
         customTasksByDate: {},    // { "YYYY-MM-DD": [task] }
         reminders: {},            // { "YYYY-MM-DD": { [taskId]: { at:"HH:MM", fired:false, icon, name } } }
@@ -1064,6 +1130,22 @@
       return { id: stableId(prefix, time, name), time, icon, name, kind, note, stars };
     }
 
+    function getOverrides(){
+      if(!state.scheduleOverrides) state.scheduleOverrides = {};
+      return state.scheduleOverrides;
+    }
+
+    function applyOverrides(tasks){
+      const overrides = getOverrides();
+      return tasks.map(task => {
+        const override = overrides[task.id];
+        if(!override) return task;
+        const merged = { ...task, ...override };
+        if(merged.kind !== "mission") merged.stars = 0;
+        return merged;
+      });
+    }
+
     function baseSchedule(){
       const p = "base";
       return [
@@ -1115,6 +1197,7 @@
         }
       }
 
+      out = applyOverrides(out);
       out.sort((a,b)=> hmToMinutes(a.time) - hmToMinutes(b.time));
       return out;
     }
@@ -1213,6 +1296,7 @@
      * Rendering
      ***********************/
     let cachedSchedule = [];
+    let selectedTaskId = null;
 
     function renderHUD(){
       document.getElementById("starBalance").textContent = state.stars;
@@ -1483,6 +1567,44 @@
       }
     }
 
+    function renderParentScheduleList(){
+      const list = document.getElementById("parentScheduleList");
+      if(!list) return;
+      const tasks = applyOverrides(baseSchedule());
+      list.innerHTML = "";
+      for(const task of tasks){
+        const row = document.createElement("div");
+        row.className = "rewardItem";
+        row.innerHTML = `
+          <div class="rIcon">${escapeHtml(task.icon || "🗓️")}</div>
+          <div class="rText">
+            <div class="t">${escapeHtml(task.name)}</div>
+            <div class="rewardMeta">
+              <span class="tagMini">${escapeHtml(task.time)}</span>
+              <span class="tagMini">${escapeHtml(task.kind)}</span>
+              ${task.kind === "mission" ? `<span class="cost">⭐ ${task.stars}</span>` : ""}
+            </div>
+          </div>
+          <button class="softBtn" data-task-id="${escapeHtml(task.id)}">Edit</button>
+        `;
+        const btn = row.querySelector("button");
+        btn.addEventListener("click", ()=>{
+          if(!isParentUnlocked()){
+            toast("🔒","Parent needed","Unlock Parent Mode first.");
+            return;
+          }
+          selectedTaskId = task.id;
+          document.getElementById("editTaskName").value = task.name || "";
+          document.getElementById("editTaskIcon").value = task.icon || "";
+          document.getElementById("editTaskTime").value = task.time || "";
+          document.getElementById("editTaskKind").value = task.kind || "routine";
+          document.getElementById("editTaskStars").value = String(task.stars ?? 0);
+          document.getElementById("editTaskNote").value = task.note || "";
+        });
+        list.appendChild(row);
+      }
+    }
+
     function renderSpecialBox(){
       const box = document.getElementById("specialBox");
       box.innerHTML = `
@@ -1530,6 +1652,7 @@
       renderSchedule();
       renderRewardShop();
       renderPurchasedRewards();
+      renderParentScheduleList();
       renderSpecialBox();
     }
 
@@ -1613,6 +1736,7 @@
         toast("🔧","Set Parent Code","Use Parent Controls to create a code.");
         renderHUD();
         renderPurchasedRewards();
+        renderParentScheduleList();
         showModal("parentPage");
         return;
       }
@@ -1636,6 +1760,7 @@
       save();
       renderHUD();
       renderPurchasedRewards();
+      renderParentScheduleList();
       showModal("parentPage");
     });
     document.getElementById("parentAction").addEventListener("change", (e)=>{
@@ -1743,12 +1868,66 @@
       save();
       renderRewardShop();
       renderPurchasedRewards();
+      renderParentScheduleList();
       toast("🎁","Reward added", `${icon} ${name} (${cost}⭐)`);
 
       document.getElementById("rewardName").value = "";
       document.getElementById("rewardIcon").value = "";
       document.getElementById("rewardCost").value = "10";
       document.getElementById("rewardNote").value = "";
+    });
+
+    document.getElementById("saveTaskEditBtn").addEventListener("click", ()=>{
+      if(!isParentUnlocked()){
+        toast("🔒","Parent needed","Unlock Parent Mode first.");
+        return;
+      }
+      if(!selectedTaskId){
+        toast("⚠️","No task selected","Choose a task to edit first.");
+        return;
+      }
+      const name = document.getElementById("editTaskName").value.trim();
+      const icon = document.getElementById("editTaskIcon").value.trim();
+      const time = document.getElementById("editTaskTime").value;
+      const kind = document.getElementById("editTaskKind").value;
+      const stars = parseInt(document.getElementById("editTaskStars").value || "0", 10);
+      const note = document.getElementById("editTaskNote").value.trim();
+
+      if(!name || !time){
+        toast("⚠️","Missing info","Task name and time are required.");
+        return;
+      }
+
+      const overrides = getOverrides();
+      overrides[selectedTaskId] = {
+        name,
+        icon,
+        time,
+        kind,
+        stars: kind === "mission" ? Math.max(0, stars) : 0,
+        note
+      };
+      save();
+      refreshScheduleCache();
+      renderAll();
+      toast("✅","Schedule updated","Changes saved.");
+    });
+
+    document.getElementById("resetTaskEditBtn").addEventListener("click", ()=>{
+      if(!isParentUnlocked()){
+        toast("🔒","Parent needed","Unlock Parent Mode first.");
+        return;
+      }
+      if(!selectedTaskId){
+        toast("⚠️","No task selected","Choose a task to reset first.");
+        return;
+      }
+      const overrides = getOverrides();
+      delete overrides[selectedTaskId];
+      save();
+      refreshScheduleCache();
+      renderAll();
+      toast("↩️","Reset","Task reverted to default.");
     });
 
     // Weekly reset (parent only)
