@@ -42,3 +42,4 @@ https://renismv.github.io/HobbyPublic/starquest/
 - All data is stored locally in the browser (no backend).
 - Parent code is stored as a SHA-256 hash.
 - Parent unlock lasts 10 minutes.
+- Parent Mode can also edit the standard schedule in-app.
