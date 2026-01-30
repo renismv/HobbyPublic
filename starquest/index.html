@@ -732,19 +732,6 @@
           </div>
         </div>
 
-        <div class="card" style="margin-top:12px;">
-          <div class="cardHeader">
-            <div>
-              <h2>Special Days & Weekend Power‑Ups 💥</h2>
-              <div class="hint">Quick cheatsheet.</div>
-            </div>
-            <div class="hint">🌙 Sleep late: Fri+Sat • 😴 Wake late: Sat+Sun</div>
-          </div>
-          <div class="storeWrap">
-            <div id="specialBox"></div>
-          </div>
-        </div>
-
         <div class="tiny">Saves progress on this device (local). If Safari data is cleared, progress resets.</div>
       </div>
     </div>
@@ -807,19 +794,41 @@
     </div>
   </div>
 
-  <!-- MODAL: Schedule -->
-  <div class="modalBack" id="scheduleModal">
-    <div class="modal">
-      <div class="modalHead">
+  <!-- PAGE: Schedule -->
+  <div class="pageBack" id="schedulePage">
+    <div class="page">
+      <div class="pageHeader">
         <h3>🗓️ Full Schedule (Today)</h3>
-        <button class="xBtn" data-close="scheduleModal">✖ Close</button>
+        <button class="xBtn" data-close="schedulePage">✖ Close</button>
       </div>
-      <div class="modalBody">
-        <div class="hint" style="margin-bottom:10px;">
-          Tap an item to mark it done.
+      <div class="pageBody">
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Schedule Timeline</h2>
+              <div class="hint">Tap an item to mark it done.</div>
+            </div>
+            <div class="hint">
+              <span class="tagMini">⭐ 19:00 homework → Uppa can help</span>
+              <span class="tagMini">👨‍👩‍👧 19:45 family time</span>
+            </div>
+          </div>
+          <div class="schedule">
+            <div class="timeline" id="timeline"></div>
+          </div>
         </div>
-        <div class="schedule">
-          <div class="timeline" id="timeline"></div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Special Days & Weekend Power‑Ups 💥</h2>
+              <div class="hint">Quick cheatsheet.</div>
+            </div>
+            <div class="hint">🌙 Sleep late: Fri+Sat • 😴 Wake late: Sat+Sun</div>
+          </div>
+          <div class="storeWrap">
+            <div id="specialBox"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1542,7 +1551,8 @@
     document.getElementById("addTaskBtn").addEventListener("click", ()=> showModal("taskModal"));
     document.getElementById("openScheduleBtn").addEventListener("click", ()=>{
       renderSchedule();
-      showModal("scheduleModal");
+      renderSpecialBox();
+      showModal("schedulePage");
     });
     document.getElementById("openShopBtn").addEventListener("click", ()=>{
       renderRewardShop();
@@ -1597,7 +1607,33 @@
     });
 
     // Parent
-    document.getElementById("parentBtn").addEventListener("click", ()=>{
+    document.getElementById("parentBtn").addEventListener("click", async ()=>{
+      const hasCode = state.parent.codeHash || state.parent.codePlain;
+      if(!hasCode){
+        toast("🔧","Set Parent Code","Use Parent Controls to create a code.");
+        renderHUD();
+        renderPurchasedRewards();
+        showModal("parentPage");
+        return;
+      }
+
+      const code = prompt("Enter parent code to continue:");
+      if(!code) return;
+      if(state.parent.codeHash){
+        const h = await sha256(code);
+        if(!h || h !== state.parent.codeHash){
+          toast("❌","Wrong code","Try again.");
+          return;
+        }
+      }else if(state.parent.codePlain){
+        if(code !== state.parent.codePlain){
+          toast("❌","Wrong code","Try again.");
+          return;
+        }
+      }
+
+      state.parent.unlockedUntil = Date.now() + 10*60*1000;
+      save();
       renderHUD();
       renderPurchasedRewards();
       showModal("parentPage");
