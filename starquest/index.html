@@ -854,7 +854,7 @@
   <div class="pageBack" id="schedulePage">
     <div class="page">
       <div class="pageHeader">
-        <h3>🗓️ Full Schedule (Today)</h3>
+        <h3>🗓️ Full Schedule (Standard)</h3>
         <button class="xBtn" data-close="schedulePage">✖ Close</button>
       </div>
       <div class="pageBody">
@@ -862,15 +862,28 @@
           <div class="cardHeader">
             <div>
               <h2>Schedule Timeline</h2>
-              <div class="hint">Full schedule view (read-only).</div>
+              <div class="hint">Standard schedule view (read-only).</div>
             </div>
             <div class="hint">
-              <span class="tagMini">⭐ 19:00 homework → Uppa can help</span>
+              <span class="tagMini">⭐ 19:00 Homework → Uppa can help</span>
               <span class="tagMini">👨‍👩‍👧 19:45 family time</span>
             </div>
           </div>
           <div class="schedule">
             <div class="timeline" id="timeline"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <h2>Weekdays 🌤️</h2>
+              <div class="hint">Quick cheatsheet.</div>
+            </div>
+            <div class="hint">Mon–Fri follow the standard schedule above.</div>
+          </div>
+          <div class="storeWrap">
+            <div id="weekdayBox"></div>
           </div>
         </div>
 
@@ -1199,20 +1212,26 @@
         makeTask(p,"07:00","🌞","Wake + wash","routine"),
         makeTask(p,"07:30","🥣","Breakfast","routine"),
         makeTask(p,"07:45","🎒","School","routine"),
-        makeTask(p,"14:30","🏠","Home + snack + change","routine"),
-        makeTask(p,"15:00","🍽️","Dishwasher check","routine","Unload/load if needed"),
-        makeTask(p,"15:10","📱","Screen time","routine","Max 1 hour"),
-        makeTask(p,"16:00","🧹","Tidy up","mission","Room + table", 1),
+        makeTask(p,"15:00","🏠","Home + snack + change + dishwasher check 1","routine","Unload/load if needed"),
+        makeTask(p,"15:30","📱","Screen time","routine","Max 1 hour"),
+        makeTask(p,"16:15","🧹","Tidy up","mission","Room + table", 1),
         makeTask(p,"16:30","🕌","Arabic class","routine","Starts 16:30"),
         makeTask(p,"17:30","🇸🇪","Swedish reading/practice","mission","30 minutes", 2),
         makeTask(p,"18:00","🍽️","Dinner","routine"),
         makeTask(p,"18:30","🎨","Flexible time","routine","Hobbies / piano / creative"),
-        makeTask(p,"19:00","✏️","Homework / learning","mission","Uppa can help 🤝", 2),
+        makeTask(p,"19:00","📚","Homework","mission","Uppa can help 🤝", 2),
+        makeTask(p,"19:30","✏️","Learning Quest","mission","Focus time", 2),
         makeTask(p,"19:45","👨‍👩‍👧","Family time","mission","Ideally together 💛", 1),
         makeTask(p,"20:30","🍽️","Dishwasher check","routine","Unload/load if needed"),
         makeTask(p,"20:45","🛁","Shower + bedtime prep","routine"),
         makeTask(p,"21:00","📖","Read + lights out","mission","Relax & sleep", 1)
       ];
+    }
+
+    function standardSchedule(){
+      const items = applyOverrides(baseSchedule());
+      items.sort((a,b)=> hmToMinutes(a.time) - hmToMinutes(b.time));
+      return items;
     }
 
     function withSpecials(items, date = new Date()){
@@ -1223,9 +1242,11 @@
       const custom = (state.customTasksByDate[today] || []).map(t => ({...t}));
       let out = [...items, ...custom];
 
+      if(wd === 2){
+        out.push(makeTask("tue","19:10","🤖","Jaanu (robot vacuum)","mission","After dinner (vacuum only, no mop)", 1));
+      }
       if(wd === 3){
         out.push(makeTask("wed","17:15","🎹","Piano lesson","routine","17:15–18:30"));
-        out.push(makeTask("wed","19:10","🤖","Jaanu (robot vacuum)","mission","After dinner", 1));
       }
       if(wd === 4){
         out.push(makeTask("thu","18:30","🏊","Swimming","routine","18:30–20:30"));
@@ -1233,10 +1254,10 @@
       if(wd === 0 || wd === 6){
         out.push(makeTask("wknd","11:00","🧺","Fold & put away clothes","mission","Weekend power-up", 1));
         out.push(makeTask("wknd","11:15","🎹","Piano practice","mission","10–20 minutes", 1));
-        out.push(makeTask("wknd","11:40","🎨","Creative time","mission","Crafts / drawing / LEGO", 1));
+        out.push(makeTask("wknd","11:40","🎨","Creative time","routine","Crafts / drawing / LEGO"));
         out.push(makeTask("wknd","12:10","🧼","Deep shower + hygiene","mission","Weekend reset", 1));
         if(wd === 6){
-          out.push(makeTask("sat","11:00","🤖","Jaanu (robot vacuum)","mission","Saturday ~11:00", 1));
+          out.push(makeTask("sat","11:00","🤖","Jaanu (robot vacuum)","mission","Saturday ~11:00 (vacuum only, no mop)", 1));
         }
         if(wd === 0){
           out.push(makeTask("sun","09:30","🏊","Swimming","routine","09:30–11:30"));
@@ -1380,7 +1401,7 @@
       document.getElementById("dayLabel").textContent = dayName(d);
 
       const wd = d.getDay();
-      const special = (wd===3 || wd===4 || wd===0 || wd===6);
+      const special = (wd===2 || wd===3 || wd===4 || wd===0 || wd===6);
       document.getElementById("specialChip").style.display = special ? "inline-flex" : "none";
     }
 
@@ -1443,18 +1464,20 @@
       }
     }
 
-    function renderSchedule(readOnly = false){
+    function renderSchedule(readOnly = false, scheduleOverride = null){
       const tl = document.getElementById("timeline");
+      if(!tl) return;
       tl.innerHTML = "";
 
+      const schedule = scheduleOverride || cachedSchedule;
       const nowM = nowMinutes();
       let currentId = null;
-      for(const t of cachedSchedule){
+      for(const t of schedule){
         if(hmToMinutes(t.time) <= nowM) currentId = t.id;
         else break;
       }
 
-      for(const t of cachedSchedule){
+      for(const t of schedule){
         const done = isDone(t.id);
         const row = document.createElement("div");
         row.className = "item" + (t.id === currentId ? " nowGlow" : "") + (done ? " itemDone" : "");
@@ -1672,10 +1695,18 @@
         <div style="display:grid; gap:10px;">
           <div style="border:1px solid rgba(11,16,32,.08); border-radius:18px; padding:12px; background:rgba(255,255,255,.82); box-shadow:0 16px 30px rgba(11,16,32,.08);">
             <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <div style="font-weight:1100;">🤖 Tuesday</div>
+              <div class="tagMini">After dinner</div>
+            </div>
+            <div class="hint" style="margin-top:6px;">Jaanu vacuum only (no mop).</div>
+          </div>
+
+          <div style="border:1px solid rgba(11,16,32,.08); border-radius:18px; padding:12px; background:rgba(255,255,255,.82); box-shadow:0 16px 30px rgba(11,16,32,.08);">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
               <div style="font-weight:1100;">🎹 Wednesday</div>
               <div class="tagMini">Piano 17:15</div>
             </div>
-            <div class="hint" style="margin-top:6px;">Also: 🤖 Jaanu after dinner.</div>
+            <div class="hint" style="margin-top:6px;">Piano lesson only.</div>
           </div>
 
           <div style="border:1px solid rgba(11,16,32,.08); border-radius:18px; padding:12px; background:rgba(255,255,255,.82); box-shadow:0 16px 30px rgba(11,16,32,.08);">
@@ -1697,10 +1728,29 @@
               <span class="tagMini">🇸🇪 Swedish 30 min</span>
               <span class="tagMini">🎨 Creative time</span>
               <span class="tagMini">🧼 Deep shower + hygiene</span>
-              <span class="tagMini">🤖 Jaanu: Saturday ~11:00</span>
+              <span class="tagMini">🤖 Jaanu: Saturday ~11:00 (vacuum only)</span>
               <span class="tagMini">🏊 Swimming: Sunday 09:30</span>
               <span class="tagMini">🎒 Sunday: school prep</span>
             </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderWeekdayBox(){
+      const box = document.getElementById("weekdayBox");
+      if(!box) return;
+      box.innerHTML = `
+        <div style="border:1px solid rgba(11,16,32,.08); border-radius:18px; padding:12px; background:rgba(255,255,255,.82); box-shadow:0 16px 30px rgba(11,16,32,.08);">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <div style="font-weight:1100;">📚 Weekdays</div>
+            <div class="tagMini">Mon–Fri</div>
+          </div>
+          <div class="hint" style="margin-top:6px;">Standard schedule applies (see timeline above).</div>
+          <div class="hint" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+            <span class="tagMini">School day</span>
+            <span class="tagMini">Arabic 16:30</span>
+            <span class="tagMini">Swedish 17:30</span>
           </div>
         </div>
       `;
@@ -1714,6 +1764,7 @@
       renderRewardShop();
       renderPurchasedRewards();
       renderParentScheduleList();
+      renderWeekdayBox();
       renderSpecialBox();
     }
 
@@ -1734,7 +1785,8 @@
     // Add task
     document.getElementById("addTaskBtn").addEventListener("click", ()=> showModal("taskModal"));
     document.getElementById("openScheduleBtn").addEventListener("click", ()=>{
-      renderSchedule(true);
+      renderSchedule(true, standardSchedule());
+      renderWeekdayBox();
       renderSpecialBox();
       showModal("schedulePage");
     });
