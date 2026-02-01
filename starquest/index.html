@@ -129,7 +129,7 @@
     .dash{
       padding: 0 14px 14px;
       display:grid;
-      grid-template-columns: .95fr 1.05fr;
+      grid-template-columns: .9fr .95fr 1.15fr;
       gap: 10px;
       position:relative;
     }
@@ -140,14 +140,14 @@
       background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
       border: 1px solid rgba(11,16,32,.08);
       box-shadow: 0 16px 30px rgba(11,16,32,.10);
-      padding: 12px;
+      padding: 10px;
       display:flex; flex-direction:column; justify-content:space-between;
-      min-height: 140px;
+      min-height: 120px;
     }
     .clockRow{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
     .time{
       font-variant-numeric: tabular-nums;
-      font-size: 44px;
+      font-size: 38px;
       font-weight: 1100;
       line-height: 1;
       letter-spacing: .8px;
@@ -171,20 +171,20 @@
     }
     .nowBox{
       border-radius: 20px;
-      padding: 12px;
+      padding: 10px;
       background:
         radial-gradient(220px 140px at 18% 25%, rgba(236,72,153,.16), transparent 60%),
         radial-gradient(250px 160px at 88% 20%, rgba(34,197,94,.14), transparent 60%),
         linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
       border: 1px solid rgba(11,16,32,.08);
       box-shadow: 0 16px 30px rgba(11,16,32,.10);
-      min-height: 140px;
+      min-height: 120px;
       display:flex; flex-direction:column; justify-content:space-between;
     }
     .nowTop{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
     .nowTitle{ display:flex; gap:10px; align-items:center; min-width:0; }
     .bubbleIcon{
-      width: 48px; height: 48px; border-radius: 16px;
+      width: 44px; height: 44px; border-radius: 14px;
       display:grid; place-items:center; font-size: 24px;
       background: rgba(255,255,255,.8);
       border: 1px solid rgba(11,16,32,.08);
@@ -193,10 +193,91 @@
     }
     .nowText{ min-width:0; }
     .nowText .label{
-      font-weight: 1100; font-size: 14px; line-height:1.15; margin-top:2px;
+      font-weight: 1100; font-size: 13px; line-height:1.15; margin-top:2px;
       white-space: nowrap; overflow:hidden; text-overflow: ellipsis; max-width: 520px;
     }
-    .nowText .sub2{ margin-top: 4px; color: var(--muted); font-size: 12px; font-weight: 950; }
+    .nowText .sub2{ margin-top: 4px; color: var(--muted); font-size: 11px; font-weight: 950; }
+
+    .statsTile{
+      border-radius: 20px;
+      padding: 10px;
+      background:
+        radial-gradient(220px 140px at 18% 25%, rgba(124,58,237,.16), transparent 60%),
+        radial-gradient(250px 160px at 88% 20%, rgba(245,158,11,.12), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 16px 30px rgba(11,16,32,.10);
+      min-height: 120px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .statsHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+    .statsTitle{
+      font-weight: 1100;
+      font-size: 13px;
+    }
+    .statsSub{
+      font-weight: 950;
+      font-size: 11px;
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .statsRows{
+      display:grid;
+      gap:6px;
+    }
+    .statsRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      font-weight: 1000;
+      font-size: 12px;
+    }
+    .statsLabel{ color: var(--muted); font-weight: 950; }
+    .statsValue b{ font-weight: 1100; }
+    .statsMissed{
+      margin-left: 6px;
+      font-size: 11px;
+      font-weight: 950;
+      color: var(--muted);
+    }
+    .statsBar{
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(11,16,32,.08);
+      overflow:hidden;
+    }
+    .statsBar span{
+      display:block;
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(34,197,94,.85), rgba(6,182,212,.85));
+      box-shadow: 0 4px 10px rgba(6,182,212,.25);
+    }
+    .statsBest{
+      margin-top: 6px;
+      display:grid;
+      gap:4px;
+      font-size: 11px;
+      font-weight: 950;
+      color: var(--muted);
+    }
+    .statsBestRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      white-space:nowrap;
+    }
+    .statsBestRow b{ color: var(--ink); }
     .ctaRow{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; }
     .softBtn{
       border: 1px solid rgba(11,16,32,.10);
@@ -224,6 +305,76 @@
       cursor:pointer;
       text-decoration: underline dotted;
       text-underline-offset: 2px;
+    }
+
+    .col{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height:0;
+    }
+
+    .card.compact{
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+
+    .card.compact .missionGrid,
+    .card.compact .checklistGrid,
+    .card.compact .storeWrap{
+      flex:1;
+      min-height:0;
+      overflow:auto;
+    }
+
+    .card.compact .dash{
+      flex:1;
+      min-height:0;
+    }
+
+    .card .tiny.inCard{
+      margin: 8px 14px 12px;
+      color: var(--muted);
+      text-align:left;
+    }
+
+    @media (min-width: 981px){
+      .wrap{
+        min-height: 100vh;
+        display:flex;
+        flex-direction:column;
+      }
+      .topbar{ padding: 10px; }
+      .avatar{ width:48px; height:48px; border-radius:16px; }
+      .brand h1{ font-size: 16px; }
+      .brand .tag{ font-size: 11px; }
+
+      .grid{
+        flex:1;
+        min-height:0;
+        grid-template-columns: minmax(0,2fr) minmax(0,1fr);
+        grid-template-rows: minmax(0,1fr) minmax(0,1.4fr) minmax(0,1fr);
+        grid-template-areas:
+          "dash dash"
+          "missions checklist"
+          "rewards rewards";
+        gap:10px;
+        align-items:stretch;
+      }
+      .col{ display: contents; }
+
+      .cardHeader{ padding: 12px 12px 8px; }
+      .dash{ padding: 0 12px 12px; gap: 8px; }
+      .bigTime, .nowBox{ min-height: 120px; padding: 10px; }
+      .time{ font-size: 38px; }
+      .missionGrid{ grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+      .checklistGrid{ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+      .dashCard{ grid-area: dash; }
+      .missionsCard{ grid-area: missions; }
+      .checklistCard{ grid-area: checklist; }
+      .rewardsCard{ grid-area: rewards; }
     }
 
     /* Tiny label badges */
@@ -526,6 +677,9 @@
       color: #136b33;
       white-space:nowrap;
     }
+    .redeemSmall{
+      margin-left:auto;
+    }
 
     /* Toast */
     .toast{
@@ -783,7 +937,7 @@
 
     <div class="grid">
       <div class="col">
-        <div class="card">
+        <div class="card compact dashCard">
           <div class="cardHeader">
             <div>
               <h2>Dashboard 🚀</h2>
@@ -807,6 +961,55 @@
               </div>
             </div>
 
+            <div class="statsTile">
+              <div class="statsHead">
+                <div class="statsTitle">Star Vault ✨</div>
+                <div class="statsSub">Collected / Possible</div>
+              </div>
+              <div class="statsRows">
+                <div class="statsRow">
+                  <span class="statsLabel">Today</span>
+                  <span class="statsValue">
+                    <b id="starsDayEarned">0</b>/<span id="starsDayTotal">0</span> ⭐
+                    <span class="statsMissed">missed <span id="starsDayMissed">0</span></span>
+                  </span>
+                </div>
+                <div class="statsBar"><span id="starsDayBar"></span></div>
+
+                <div class="statsRow">
+                  <span class="statsLabel">This week</span>
+                  <span class="statsValue">
+                    <b id="starsWeekEarned">0</b>/<span id="starsWeekTotal">0</span> ⭐
+                    <span class="statsMissed">missed <span id="starsWeekMissed">0</span></span>
+                  </span>
+                </div>
+                <div class="statsBar"><span id="starsWeekBar"></span></div>
+
+                <div class="statsRow">
+                  <span class="statsLabel">This month</span>
+                  <span class="statsValue">
+                    <b id="starsMonthEarned">0</b>/<span id="starsMonthTotal">0</span> ⭐
+                    <span class="statsMissed">missed <span id="starsMonthMissed">0</span></span>
+                  </span>
+                </div>
+                <div class="statsBar"><span id="starsMonthBar"></span></div>
+              </div>
+              <div class="statsBest">
+                <div class="statsBestRow">
+                  <span>Best day</span>
+                  <span><b id="bestDayStars">—</b> ⭐ <span id="bestDayLabel">—</span></span>
+                </div>
+                <div class="statsBestRow">
+                  <span>Best week</span>
+                  <span><b id="bestWeekStars">—</b> ⭐ <span id="bestWeekLabel">—</span></span>
+                </div>
+                <div class="statsBestRow">
+                  <span>Best month</span>
+                  <span><b id="bestMonthStars">—</b> ⭐ <span id="bestMonthLabel">—</span></span>
+                </div>
+              </div>
+            </div>
+
             <div class="nowBox">
               <div class="nowTop">
                 <div class="nowTitle">
@@ -827,7 +1030,7 @@
           </div>
         </div>
 
-        <div class="card" style="margin-top:12px;">
+        <div class="card compact missionsCard">
           <div class="cardHeader">
             <div>
               <h2>Missions ⭐</h2>
@@ -845,7 +1048,7 @@
           <div class="missionGrid" id="missionGrid"></div>
         </div>
 
-        <div class="card" style="margin-top:12px;">
+        <div class="card compact checklistCard">
           <div class="cardHeader">
             <div>
               <h2>Core 9 Checklist ✨</h2>
@@ -858,7 +1061,7 @@
       </div>
 
       <div class="col">
-        <div class="card">
+        <div class="card compact rewardsCard">
           <div class="cardHeader">
             <div>
               <h2>My Rewards 🎉</h2>
@@ -872,9 +1075,8 @@
             <div class="rewardList" id="earnedRewardGrid"></div>
             <div class="hint">Tip: save stars for big rewards 🎯</div>
           </div>
+          <div class="tiny inCard">Saves progress on this device (local). If Safari data is cleared, progress resets.</div>
         </div>
-
-        <div class="tiny">Saves progress on this device (local). If Safari data is cleared, progress resets.</div>
       </div>
     </div>
   </div>
@@ -1090,7 +1292,7 @@
               </div>
               <div>
                 <label>Cost (stars)</label>
-                <input id="rewardCost" type="number" min="1" step="1" value="10" />
+                <input id="rewardCost" type="number" min="1" step="1" value="30" />
               </div>
               <div>
                 <label>Notes (optional)</label>
@@ -1264,15 +1466,22 @@
     /***********************
      * Default state
      ***********************/
+    const REWARD_COST = 30;
     const DEFAULT_REWARDS = [
-      { id: "rw1", icon:"🍿", name:"Choose the movie", cost:12, note:"Movie night" },
-      { id: "rw2", icon:"🍰", name:"Pick dessert", cost:10, note:"Dessert boss" },
-      { id: "rw3", icon:"🎮", name:"+15 min screen time", cost:14, note:"Fri or Sat" },
-      { id: "rw4", icon:"🍕", name:"Choose dinner", cost:18, note:"Chef decision" },
-      { id: "rw5", icon:"🧸", name:"Small surprise", cost:25, note:"Tiny toy / sticker pack" },
-      { id: "rw6", icon:"📚", name:"Library + treat", cost:20, note:"Book + fika" },
-      { id: "rw7", icon:"🛝", name:"Extra play time outside", cost:16, note:"Park / walk" },
-      { id: "rw8", icon:"🎨", name:"Craft kit / art time", cost:15, note:"Creative hour" }
+      { id: "rw1", icon:"🍿", name:"Choose the movie", cost:REWARD_COST, note:"Movie night" },
+      { id: "rw2", icon:"🍰", name:"Pick dessert", cost:REWARD_COST, note:"Dessert boss" },
+      { id: "rw3", icon:"🎮", name:"+15 min screen time", cost:REWARD_COST, note:"Fri or Sat" },
+      { id: "rw4", icon:"🍕", name:"Choose dinner", cost:REWARD_COST, note:"Chef decision" },
+      { id: "rw5", icon:"🧸", name:"Small surprise", cost:REWARD_COST, note:"Tiny toy / sticker pack" },
+      { id: "rw6", icon:"📚", name:"Library + treat", cost:REWARD_COST, note:"Book + fika" },
+      { id: "rw7", icon:"🛝", name:"Extra play time outside", cost:REWARD_COST, note:"Park / walk" },
+      { id: "rw8", icon:"🎨", name:"Craft kit / art time", cost:REWARD_COST, note:"Creative hour" },
+      { id: "rw9", icon:"🎲", name:"Board game pick", cost:REWARD_COST, note:"Family game night" },
+      { id: "rw10", icon:"🧁", name:"Bake together", cost:REWARD_COST, note:"Kitchen helper" },
+      { id: "rw11", icon:"🎤", name:"Mini karaoke", cost:REWARD_COST, note:"Sing 2 songs" },
+      { id: "rw12", icon:"🛼", name:"Skate time", cost:REWARD_COST, note:"Wheel adventure" },
+      { id: "rw13", icon:"🎟️", name:"Surprise outing", cost:REWARD_COST, note:"Pick a place" },
+      { id: "rw14", icon:"🧩", name:"Puzzle pick", cost:REWARD_COST, note:"Choose the puzzle" }
     ];
 
     const CORE_CHECKLIST = [
@@ -1303,6 +1512,33 @@
     }
 
     let state = safeLoad() || defaultState();
+    normalizeRewards();
+
+    function normalizeRewards(){
+      if(!Array.isArray(state.rewards)) state.rewards = [];
+      const byId = new Map(DEFAULT_REWARDS.map(r => [r.id, r]));
+      const merged = [];
+      const seen = new Set();
+
+      for(const r of state.rewards){
+        if(!r || typeof r !== "object") continue;
+        const base = byId.get(r.id);
+        if(base){
+          merged.push({ ...base, ...r, id: base.id, cost: REWARD_COST });
+          seen.add(base.id);
+        }else{
+          const rid = r.id || ("rw|" + randId());
+          merged.push({ ...r, id: rid, cost: REWARD_COST });
+        }
+      }
+
+      for(const r of DEFAULT_REWARDS){
+        if(!seen.has(r.id)) merged.push({ ...r, cost: REWARD_COST });
+      }
+
+      state.rewards = merged;
+      safeSave(state);
+    }
 
     /***********************
      * UI helpers
@@ -1334,9 +1570,11 @@
       }
     }
 
+    let didInitialRender = false;
+
     function save(){
       safeSave(state);
-      renderHUD();
+      if(didInitialRender) renderHUD();
     }
 
     function clampViewDateKey(key){
@@ -1605,6 +1843,7 @@
     function renderHUD(){
       document.getElementById("starBalance").textContent = state.stars;
       document.getElementById("streak").textContent = calcStreak();
+      renderStarStats();
       const parentLabel = "Parent: " + (isParentUnlocked() ? "ON ✅" : "OFF");
       const parentPageStatus = document.getElementById("parentPageStatus");
       if(parentPageStatus) parentPageStatus.textContent = parentLabel;
@@ -1667,11 +1906,25 @@
         current?.note ? current.note : (current?.kind==="mission" ? `Mission • ⭐ ${current.stars}` : "Routine");
 
       const nextIn = document.getElementById("nextIn");
+      let prev = null;
+      for(const t of cachedSchedule){
+        if(current && t.id === current.id) break;
+        if(hmToMinutes(t.time) <= nowMinutes()) prev = t;
+      }
+      const prevLine = prev ? `Prev: <b>${escapeHtml(prev.icon)} ${escapeHtml(prev.name)}</b>` : "Prev: —";
       if(next){
         const diff = hmToMinutes(next.time) - nowMinutes();
-        nextIn.innerHTML = `Next: <b>${escapeHtml(next.icon)} ${escapeHtml(next.name)}</b><br><span style="color:var(--muted); font-weight:950;">in ${diff} min</span>`;
+        nextIn.innerHTML = `
+          <div>${prevLine}</div>
+          <div>Next: <b>${escapeHtml(next.icon)} ${escapeHtml(next.name)}</b></div>
+          <div style="color:var(--muted); font-weight:950;">in ${diff} min</div>
+        `;
       }else{
-        nextIn.textContent = "Last task of the day ✅";
+        nextIn.innerHTML = `
+          <div>${prevLine}</div>
+          <div>Next: <b>—</b></div>
+          <div style="color:var(--muted); font-weight:950;">Last task of the day ✅</div>
+        `;
       }
     }
 
@@ -1726,6 +1979,198 @@
 
       const label = document.getElementById("checklistDateLabel");
       if(label) label.textContent = `For: ${viewDateLabel(viewKey)}`;
+    }
+
+    function starsForDate(key){
+      const schedule = scheduleForDateKey(key);
+      const completed = completedMapForDate(key);
+      const checklist = checklistMapForDate(key);
+      let total = 0;
+      let earned = 0;
+
+      for(const t of schedule){
+        if(t.kind !== "mission") continue;
+        const stars = Math.max(0, t.stars || 0);
+        if(stars <= 0) continue;
+        total += stars;
+        if(completed[t.id]) earned += stars;
+      }
+
+      for(const item of CORE_CHECKLIST){
+        const stars = Math.max(1, item.stars || 1);
+        total += stars;
+        if(checklist[item.id]) earned += stars;
+      }
+
+      return { earned, total };
+    }
+
+    function starsForRange(startDate, endDate, earnedCutoffKey = nowISODate()){
+      let earned = 0;
+      let total = 0;
+      const cutoff = dateFromKeyNoon(earnedCutoffKey).getTime();
+      const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      const endKey = dateKeyFromDate(endDate);
+      for(;;){
+        const key = dateKeyFromDate(d);
+        const stats = starsForDate(key);
+        total += stats.total;
+        if(dateFromKeyNoon(key).getTime() <= cutoff){
+          earned += stats.earned;
+        }
+        if(key === endKey) break;
+        d.setDate(d.getDate() + 1);
+      }
+      return { earned, total };
+    }
+
+    function starsPastForDate(key){
+      const todayKey = nowISODate();
+      const keyTime = dateFromKeyNoon(key).getTime();
+      const todayTime = dateFromKeyNoon(todayKey).getTime();
+      if(keyTime > todayTime) return { earned: 0, total: 0 };
+      if(keyTime < todayTime){
+        return starsForDate(key);
+      }
+
+      const schedule = scheduleForDateKey(key);
+      const completed = completedMapForDate(key);
+      const nowM = nowMinutes();
+      let total = 0;
+      let earned = 0;
+      for(const t of schedule){
+        if(t.kind !== "mission") continue;
+        const stars = Math.max(0, t.stars || 0);
+        if(stars <= 0) continue;
+        if(hmToMinutes(t.time) <= nowM){
+          total += stars;
+          if(completed[t.id]) earned += stars;
+        }
+      }
+      return { earned, total };
+    }
+
+    function starsPastForRange(startDate, endDate){
+      let earned = 0;
+      let total = 0;
+      const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      const endKey = dateKeyFromDate(endDate);
+      for(;;){
+        const key = dateKeyFromDate(d);
+        const stats = starsPastForDate(key);
+        earned += stats.earned;
+        total += stats.total;
+        if(key === endKey) break;
+        d.setDate(d.getDate() + 1);
+      }
+      return { earned, total };
+    }
+
+    function renderStarStats(){
+      const today = new Date();
+      const todayKey = nowISODate();
+
+      const day = starsForDate(todayKey);
+      const weekStart = (()=> {
+        const d = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const diff = (d.getDay() + 6) % 7; // Monday as start
+        d.setDate(d.getDate() - diff);
+        return d;
+      })();
+      const weekEnd = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate());
+      weekEnd.setDate(weekEnd.getDate() + 6);
+
+      const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+      const week = starsForRange(weekStart, weekEnd, todayKey);
+      const month = starsForRange(monthStart, monthEnd, todayKey);
+
+      const dayPast = starsPastForDate(todayKey);
+      const weekPast = starsPastForRange(weekStart, weekEnd);
+      const monthPast = starsPastForRange(monthStart, monthEnd);
+
+      const setStat = (earnedId, totalId, barId, missedId, earned, total, pastPossible, pastEarned) => {
+        const e = document.getElementById(earnedId);
+        const t = document.getElementById(totalId);
+        const b = document.getElementById(barId);
+        const m = document.getElementById(missedId);
+        const missed = Math.max(0, pastPossible - pastEarned);
+        if(e) e.textContent = earned;
+        if(t) t.textContent = total;
+        if(m) m.textContent = missed;
+        if(b) b.style.width = total > 0 ? `${Math.min(100, Math.round((earned/total)*100))}%` : "0%";
+      };
+
+      setStat("starsDayEarned", "starsDayTotal", "starsDayBar", "starsDayMissed", day.earned, day.total, dayPast.total, dayPast.earned);
+      setStat("starsWeekEarned", "starsWeekTotal", "starsWeekBar", "starsWeekMissed", week.earned, week.total, weekPast.total, weekPast.earned);
+      setStat("starsMonthEarned", "starsMonthTotal", "starsMonthBar", "starsMonthMissed", month.earned, month.total, monthPast.total, monthPast.earned);
+
+      const keys = new Set([
+        ...Object.keys(state.completedByDate || {}),
+        ...Object.keys(state.checklistByDate || {})
+      ]);
+
+      let bestDay = { stars: 0, key: null };
+      const weeks = new Map();
+      const months = new Map();
+
+      for(const key of keys){
+        const normKey = normalizeDateKey(key);
+        const stats = starsForDate(normKey);
+        if(stats.earned > bestDay.stars){
+          bestDay = { stars: stats.earned, key: normKey };
+        }
+
+        const d = dateFromKey(normKey);
+        const wk = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        const diff = (wk.getDay() + 6) % 7;
+        wk.setDate(wk.getDate() - diff);
+        const weekKey = dateKeyFromDate(wk);
+        weeks.set(weekKey, (weeks.get(weekKey) || 0) + stats.earned);
+
+        const monthKey = `${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
+        months.set(monthKey, (months.get(monthKey) || 0) + stats.earned);
+      }
+
+      const bestMap = (map)=> {
+        let best = { key: null, value: 0 };
+        for(const [k,v] of map.entries()){
+          if(v > best.value) best = { key: k, value: v };
+        }
+        return best;
+      };
+
+      const bestWeek = bestMap(weeks);
+      const bestMonth = bestMap(months);
+
+      const setBest = (starsId, labelId, stars, label)=> {
+        const s = document.getElementById(starsId);
+        const l = document.getElementById(labelId);
+        if(s) s.textContent = stars > 0 ? stars : "—";
+        if(l) l.textContent = label || "—";
+      };
+
+      setBest(
+        "bestDayStars",
+        "bestDayLabel",
+        bestDay.stars,
+        bestDay.key ? prettyDate(dateFromKey(bestDay.key)) : null
+      );
+
+      setBest(
+        "bestWeekStars",
+        "bestWeekLabel",
+        bestWeek.value,
+        bestWeek.key ? `Week of ${prettyDate(dateFromKey(bestWeek.key))}` : null
+      );
+
+      setBest(
+        "bestMonthStars",
+        "bestMonthLabel",
+        bestMonth.value,
+        bestMonth.key ? new Date(bestMonth.key + "-01").toLocaleDateString(undefined, { month: "short", year: "numeric" }) : null
+      );
     }
 
     function renderViewDateControls(){
@@ -1875,12 +2320,13 @@
       const parentGrid = document.getElementById("parentRewardList");
       if(earnedGrid){
         earnedGrid.innerHTML = "";
-        if(!state.purchasedRewards.length){
-          earnedGrid.innerHTML = `<div class="hint">No rewards unlocked yet. ⭐</div>`;
+        const activeRewards = state.purchasedRewards.filter(r => !r.used);
+        if(!activeRewards.length){
+          earnedGrid.innerHTML = `<div class="hint">No active rewards right now.</div>`;
         }else{
-          for(const reward of state.purchasedRewards){
+          for(const reward of activeRewards){
             const item = document.createElement("div");
-            item.className = "rewardItem" + (reward.used ? " used" : "");
+            item.className = "rewardItem";
             item.innerHTML = `
               <div class="rIcon">${escapeHtml(reward.icon || "🎁")}</div>
               <div class="rText">
@@ -1890,8 +2336,16 @@
                   <span class="cost">${reward.cost} ⭐</span>
                 </div>
               </div>
-              <div class="rewardStatus">${reward.used ? "Used" : "Active"}</div>
+              <button class="softBtn redeemSmall">Redeem</button>
             `;
+            const btn = item.querySelector("button");
+            btn.addEventListener("click", ()=>{
+              reward.used = true;
+              save();
+              renderPurchasedRewards();
+              renderHUD();
+              toast("🎁","Redeemed!", `${reward.name} used ✅`);
+            });
             earnedGrid.appendChild(item);
           }
         }
@@ -2294,10 +2748,10 @@
       }
       const name = document.getElementById("rewardName").value.trim();
       const icon = document.getElementById("rewardIcon").value.trim() || "🎁";
-      const cost = parseInt(document.getElementById("rewardCost").value || "1", 10);
+      const cost = REWARD_COST;
       const note = document.getElementById("rewardNote").value.trim();
 
-      if(!name || !cost || cost < 1){
+      if(!name){
         toast("⚠️","Missing info","Add reward name + cost.");
         return;
       }
@@ -2310,7 +2764,7 @@
 
       document.getElementById("rewardName").value = "";
       document.getElementById("rewardIcon").value = "";
-      document.getElementById("rewardCost").value = "10";
+      document.getElementById("rewardCost").value = String(REWARD_COST);
       document.getElementById("rewardNote").value = "";
     });
 
@@ -2423,6 +2877,7 @@
 
     refreshScheduleCache();
     renderAll();
+    didInitialRender = true;
     tick();
     setInterval(tick, 15000);
 
