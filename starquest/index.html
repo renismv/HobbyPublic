@@ -212,6 +212,19 @@
       align-items:center;
       gap:8px;
     }
+    .softBtn.tiny{
+      padding: 6px 9px;
+      font-size: 11px;
+    }
+    .softBtn[disabled]{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+    .hint.clickable{
+      cursor:pointer;
+      text-decoration: underline dotted;
+      text-underline-offset: 2px;
+    }
 
     /* Tiny label badges */
     .tagMini{
@@ -297,6 +310,79 @@
       background: linear-gradient(180deg, rgba(236,253,245,.90), rgba(255,255,255,.70));
     }
     .done .stars{
+      background: rgba(34,197,94,.14);
+      border-color: rgba(34,197,94,.26);
+      color: #136b33;
+    }
+
+    /* Checklist */
+    .checklistGrid{
+      padding: 0 14px 14px;
+      display:grid;
+      gap:10px;
+      position:relative;
+    }
+    .checkItem{
+      border-radius: 20px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.74));
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 16px 30px rgba(11,16,32,.08);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      cursor:pointer;
+      user-select:none;
+      position:relative;
+      overflow:hidden;
+    }
+    .checkItem::before{
+      content:"";
+      position:absolute;
+      inset:-40px -60px auto auto;
+      width: 160px; height: 120px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(6,182,212,.18), transparent 60%);
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+    .checkItem.done{
+      outline: 3px solid rgba(34,197,94,.35);
+      background: linear-gradient(180deg, rgba(236,253,245,.92), rgba(255,255,255,.74));
+    }
+    .checkIcon{
+      width: 52px; height: 52px; border-radius: 18px;
+      display:grid; place-items:center; font-size: 24px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid rgba(11,16,32,.08);
+      box-shadow: 0 14px 26px rgba(11,16,32,.10);
+      flex:0 0 auto;
+      position:relative;
+      z-index:1;
+    }
+    .checkText{ min-width:0; position:relative; z-index:1; }
+    .checkTitle{ font-weight:1100; font-size: 13px; }
+    .checkNote{
+      margin-top:4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 950;
+    }
+    .checkStar{
+      margin-left:auto;
+      font-weight:1100;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(245,158,11,.14);
+      border: 1px solid rgba(245,158,11,.26);
+      color: #7a4b00;
+      white-space:nowrap;
+      position:relative;
+      z-index:1;
+    }
+    .checkItem.done .checkStar{
       background: rgba(34,197,94,.14);
       border-color: rgba(34,197,94,.26);
       color: #136b33;
@@ -744,15 +830,30 @@
         <div class="card" style="margin-top:12px;">
           <div class="cardHeader">
             <div>
-              <h2>Today’s Missions ⭐</h2>
-              <div class="hint">Tap to earn stars.</div>
+              <h2>Missions ⭐</h2>
+              <div class="hint">Tap to mark done/undone.</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <button class="softBtn tiny" id="missionsBackBtn" title="Go back one day">⬅️</button>
+                <div class="hint" id="viewDateLabel">Viewing: Today</div>
+              </div>
               <div class="hint" id="missionCount">—</div>
               <button class="softBtn" id="openScheduleBtn">🗓️ Full schedule</button>
             </div>
           </div>
           <div class="missionGrid" id="missionGrid"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <div class="cardHeader">
+            <div>
+              <h2>Core 9 Checklist ✨</h2>
+              <div class="hint">Each check earns +1 ⭐.</div>
+            </div>
+            <div class="hint" id="checklistDateLabel">For: Today</div>
+          </div>
+          <div class="checklistGrid" id="checklistGrid"></div>
         </div>
       </div>
 
@@ -1087,6 +1188,47 @@
     const prettyDate = (d=new Date())=> d.toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric"});
     const stableId = (prefix, time, name)=> (prefix + "|" + time + "|" + name).toLowerCase().replace(/[^a-z0-9|]+/g,"-");
     const randId = ()=> Math.random().toString(16).slice(2) + Date.now().toString(16);
+    const dateKeyFromDate = (d)=> d.toISOString().slice(0,10);
+    const MAX_BACK_DAYS = 2; // last 3 days including today
+
+    function dateFromKey(key){
+      if(!key || typeof key !== "string") return new Date();
+      const parts = key.split("-").map(Number);
+      if(parts.length !== 3 || parts.some(n => !Number.isFinite(n))) return new Date();
+      return new Date(parts[0], parts[1]-1, parts[2]);
+    }
+
+    function dateFromKeyNoon(key){
+      const d = dateFromKey(key);
+      d.setHours(12,0,0,0);
+      return d;
+    }
+
+    function daysBetweenKeys(fromKey, toKey){
+      const a = dateFromKeyNoon(fromKey).getTime();
+      const b = dateFromKeyNoon(toKey).getTime();
+      return Math.round((a - b) / 86400000);
+    }
+
+    function offsetDateKey(daysBack){
+      const d = new Date();
+      d.setDate(d.getDate() - daysBack);
+      return dateKeyFromDate(d);
+    }
+
+    function normalizeDateKey(key){
+      if(typeof key !== "string") return nowISODate();
+      return /^\d{4}-\d{2}-\d{2}$/.test(key) ? key : nowISODate();
+    }
+
+    function viewDateLabel(key){
+      const todayKey = nowISODate();
+      if(key === todayKey) return "Today";
+      const daysBack = daysBetweenKeys(todayKey, key);
+      if(daysBack === 1) return "Yesterday";
+      if(daysBack > 1 && daysBack <= MAX_BACK_DAYS) return `${daysBack} days ago`;
+      return prettyDate(dateFromKey(key));
+    }
 
     function escapeHtml(s){
       return (s ?? "").toString()
@@ -1133,6 +1275,14 @@
       { id: "rw8", icon:"🎨", name:"Craft kit / art time", cost:15, note:"Creative hour" }
     ];
 
+    const CORE_CHECKLIST = [
+      { id: "sleep", icon:"🌙", title:"Dreamy Sleep", note:"9–10 hours or woke up refreshed", stars:1 },
+      { id: "hygiene", icon:"🪥", title:"Sparkle Smile", note:"Brushed twice", stars:1 },
+      { id: "fuel", icon:"🥕", title:"Fuel + Flow", note:"Fruit + veggie + 2–4 cups water", stars:1 },
+      { id: "move", icon:"🏃", title:"Move Magic", note:"20 min play / walk / dance / sport", stars:1 },
+      { id: "kind", icon:"💛", title:"Kindness Spark", note:"Did one kind thing", stars:1 }
+    ];
+
     function defaultState(){
       return {
         stars: 0,
@@ -1142,6 +1292,8 @@
         completedByDate: {},      // { "YYYY-MM-DD": { [taskId]: true } }
         customTasksByDate: {},    // { "YYYY-MM-DD": [task] }
         reminders: {},            // { "YYYY-MM-DD": { [taskId]: { at:"HH:MM", fired:false, icon, name } } }
+        viewDateKey: null,        // dashboard date override (YYYY-MM-DD)
+        checklistByDate: {},      // { "YYYY-MM-DD": { [itemId]: true } }
         parent: {
           codeHash: null,         // hash if available
           codePlain: null,        // fallback
@@ -1187,6 +1339,29 @@
       renderHUD();
     }
 
+    function clampViewDateKey(key){
+      const todayKey = nowISODate();
+      const k = normalizeDateKey(key || todayKey);
+      const daysBack = daysBetweenKeys(todayKey, k);
+      if(daysBack < 0) return todayKey;
+      if(daysBack > MAX_BACK_DAYS) return offsetDateKey(MAX_BACK_DAYS);
+      return k;
+    }
+
+    function getViewDateKey(){
+      return clampViewDateKey(state?.viewDateKey || nowISODate());
+    }
+
+    function setViewDateKey(key){
+      state.viewDateKey = clampViewDateKey(key);
+      save();
+      renderAll();
+    }
+
+    function isViewingToday(){
+      return getViewDateKey() === nowISODate();
+    }
+
     function isParentUnlocked(){
       return (state.parent?.unlockedUntil || 0) > Date.now();
     }
@@ -1224,15 +1399,15 @@
         makeTask(p,"15:30","📱","Screen time","routine","Max 1 hour"),
         makeTask(p,"16:15","🧹","Tidy up","mission","Room + table", 1),
         makeTask(p,"16:30","🕌","Arabic class","routine","Starts 16:30"),
-        makeTask(p,"17:30","🇸🇪","Swedish reading/practice","mission","30 minutes", 2),
+        makeTask(p,"17:30","🇸🇪","Swedish reading/practice","mission","30 minutes", 1),
         makeTask(p,"18:00","🍽️","Dinner","routine"),
         makeTask(p,"18:30","🎨","Flexible time","routine","Hobbies / piano / creative"),
-        makeTask(p,"19:00","📚","Homework","mission","Uppa can help 🤝", 2),
-        makeTask(p,"19:30","✏️","Learning Quest","mission","Focus time", 2),
-        makeTask(p,"19:45","👨‍👩‍👧","Family time","mission","Ideally together 💛", 1),
+        makeTask(p,"19:00","📚","Homework","mission","Uppa can help 🤝", 1),
+        makeTask(p,"19:30","✏️","Learning Quest","mission","Focus time", 1),
+        makeTask(p,"19:45","👨‍👩‍👧","Family time","routine","Ideally together 💛"),
         makeTask(p,"20:30","🍽️","Dishwasher check","routine","Unload/load if needed"),
         makeTask(p,"20:45","🛁","Shower + bedtime prep","routine"),
-        makeTask(p,"21:00","📖","Read + lights out","mission","Relax & sleep", 1)
+        makeTask(p,"21:00","📖","Read + lights out","routine","Relax & sleep")
       ];
     }
 
@@ -1242,19 +1417,19 @@
       return items;
     }
 
-    function withSpecials(items, date = new Date()){
+    function withSpecials(items, date = new Date(), dateKey = null){
       const d = new Date(date);
       const wd = d.getDay(); // 0 Sun, 1 Mon...
-      const today = nowISODate();
+      const key = dateKey || nowISODate();
 
-      const custom = (state.customTasksByDate[today] || []).map(t => ({...t}));
+      const custom = (state.customTasksByDate[key] || []).map(t => ({...t}));
       let out = [...items, ...custom];
 
       if(wd === 2){
         out.push(makeTask("tue","19:10","🤖","Jaanu (robot vacuum)","mission","After dinner (vacuum only, no mop)", 1));
       }
       if(wd === 3){
-        out.push(makeTask("wed","17:15","🎹","Piano lesson","routine","17:15–18:30"));
+        out.push(makeTask("wed","17:45","🎹","Piano lesson","routine","17:45–18:30"));
       }
       if(wd === 4){
         out.push(makeTask("thu","18:30","🏊","Swimming","routine","18:30–20:30"));
@@ -1269,7 +1444,7 @@
         }
         if(wd === 0){
           out.push(makeTask("sun","09:30","🏊","Swimming","routine","09:30–11:30"));
-          out.push(makeTask("sun","18:30","🎒","School prep","mission","Bag + clothes + bottle", 1));
+          out.push(makeTask("sun","18:30","🎒","School prep","routine","Bag + clothes + bottle"));
         }
       }
 
@@ -1279,25 +1454,31 @@
     }
 
     function todaySchedule(){
-      return withSpecials(baseSchedule(), new Date());
+      return withSpecials(baseSchedule(), new Date(), nowISODate());
+    }
+
+    function scheduleForDateKey(key){
+      const k = normalizeDateKey(key);
+      const d = dateFromKey(k);
+      return withSpecials(baseSchedule(), d, k);
     }
 
     /***********************
      * Completion & stars
      ***********************/
-    function completedMapForToday(){
-      const key = nowISODate();
+    function completedMapForDate(dateKey = nowISODate()){
+      const key = normalizeDateKey(dateKey);
       if(!state.completedByDate[key]) state.completedByDate[key] = {};
       return state.completedByDate[key];
     }
 
-    function isDone(taskId){
-      const m = completedMapForToday();
+    function isDone(taskId, dateKey = nowISODate()){
+      const m = completedMapForDate(dateKey);
       return !!m[taskId];
     }
 
-    function toggleDone(t, elemForStars = null){
-      const m = completedMapForToday();
+    function toggleDone(t, elemForStars = null, dateKey = nowISODate()){
+      const m = completedMapForDate(dateKey);
       if(m[t.id]){
         delete m[t.id];
         if(t.kind === "mission" && t.stars > 0){
@@ -1310,11 +1491,11 @@
         renderAll();
         return;
       }
-      markDone(t, elemForStars);
+      markDone(t, elemForStars, dateKey);
     }
 
-    function markDone(t, elemForStars = null){
-      const m = completedMapForToday();
+    function markDone(t, elemForStars = null, dateKey = nowISODate()){
+      const m = completedMapForDate(dateKey);
       if(m[t.id]) return;
       m[t.id] = true;
 
@@ -1331,6 +1512,36 @@
 
       save();
       renderAll();
+    }
+
+    function checklistMapForDate(dateKey = nowISODate()){
+      const key = normalizeDateKey(dateKey);
+      if(!state.checklistByDate) state.checklistByDate = {};
+      if(!state.checklistByDate[key]) state.checklistByDate[key] = {};
+      return state.checklistByDate[key];
+    }
+
+    function isChecklistDone(itemId, dateKey = nowISODate()){
+      const m = checklistMapForDate(dateKey);
+      return !!m[itemId];
+    }
+
+    function toggleChecklist(item, dateKey = nowISODate()){
+      const m = checklistMapForDate(dateKey);
+      const stars = Math.max(1, item.stars || 1);
+      if(m[item.id]){
+        delete m[item.id];
+        state.stars = Math.max(0, state.stars - stars);
+        save();
+        renderAll();
+        toast("↩️","Unmarked", `${item.title} (-${stars} ⭐)`);
+        return;
+      }
+      m[item.id] = true;
+      state.stars += stars;
+      save();
+      renderAll();
+      toast("⭐","Checklist", `+${stars} ⭐ for "${item.title}"`);
     }
 
     /***********************
@@ -1428,6 +1639,25 @@
     }
 
     function renderNowBox(){
+      const viewKey = getViewDateKey();
+      const todayKey = nowISODate();
+      const markBtn = document.getElementById("markNowDoneBtn");
+      const nudgeBtn = document.getElementById("nudgeBtn");
+
+      if(viewKey !== todayKey){
+        window.__currentTaskId = null;
+        document.getElementById("nowIcon").textContent = "🗓️";
+        document.getElementById("nowTask").textContent = `Viewing ${viewDateLabel(viewKey)}`;
+        document.getElementById("nowMeta").textContent = "Select a mission below to mark done/undone.";
+        document.getElementById("nextIn").textContent = "Past day overview";
+        if(markBtn) markBtn.disabled = true;
+        if(nudgeBtn) nudgeBtn.disabled = true;
+        return;
+      }
+
+      if(markBtn) markBtn.disabled = false;
+      if(nudgeBtn) nudgeBtn.disabled = false;
+
       const { current, next } = findCurrentTask(cachedSchedule);
       window.__currentTaskId = current?.id || null;
 
@@ -1448,12 +1678,13 @@
     function renderMissions(){
       const grid = document.getElementById("missionGrid");
       grid.innerHTML = "";
-      const missions = cachedSchedule.filter(t => t.kind === "mission");
+      const viewKey = getViewDateKey();
+      const missions = scheduleForDateKey(viewKey).filter(t => t.kind === "mission");
       document.getElementById("missionCount").textContent = `${missions.length} missions`;
 
       for(const t of missions){
         const div = document.createElement("div");
-        div.className = "mission" + (isDone(t.id) ? " done" : "");
+        div.className = "mission" + (isDone(t.id, viewKey) ? " done" : "");
         div.innerHTML = `
           <div class="mIcon">${escapeHtml(t.icon)}</div>
           <div class="mText">
@@ -1466,27 +1697,70 @@
           <div class="stars">+${t.stars} ⭐</div>
         `;
         div.addEventListener("click", ()=>{
-          toggleDone(t, div);
+          toggleDone(t, div, viewKey);
         });
         grid.appendChild(div);
       }
     }
 
-    function renderSchedule(readOnly = false, scheduleOverride = null){
+    function renderChecklist(){
+      const grid = document.getElementById("checklistGrid");
+      if(!grid) return;
+      const viewKey = getViewDateKey();
+      grid.innerHTML = "";
+      for(const item of CORE_CHECKLIST){
+        const done = isChecklistDone(item.id, viewKey);
+        const row = document.createElement("div");
+        row.className = "checkItem" + (done ? " done" : "");
+        row.innerHTML = `
+          <div class="checkIcon">${escapeHtml(item.icon)}</div>
+          <div class="checkText">
+            <div class="checkTitle">${escapeHtml(item.title)}</div>
+            <div class="checkNote">${escapeHtml(item.note)}</div>
+          </div>
+          <div class="checkStar">${done ? "✅" : "⬜️"} +${item.stars || 1} ⭐</div>
+        `;
+        row.addEventListener("click", ()=> toggleChecklist(item, viewKey));
+        grid.appendChild(row);
+      }
+
+      const label = document.getElementById("checklistDateLabel");
+      if(label) label.textContent = `For: ${viewDateLabel(viewKey)}`;
+    }
+
+    function renderViewDateControls(){
+      const key = getViewDateKey();
+      const label = document.getElementById("viewDateLabel");
+      if(label){
+        label.textContent = `Viewing: ${viewDateLabel(key)}`;
+        label.classList.toggle("clickable", key !== nowISODate());
+      }
+
+      const backBtn = document.getElementById("missionsBackBtn");
+      if(backBtn){
+        const daysBack = daysBetweenKeys(nowISODate(), key);
+        backBtn.disabled = daysBack >= MAX_BACK_DAYS;
+      }
+    }
+
+    function renderSchedule(readOnly = false, scheduleOverride = null, dateKeyOverride = null){
       const tl = document.getElementById("timeline");
       if(!tl) return;
       tl.innerHTML = "";
 
-      const schedule = scheduleOverride || cachedSchedule;
+      const dateKey = dateKeyOverride || getViewDateKey();
+      const schedule = scheduleOverride || scheduleForDateKey(dateKey);
       const nowM = nowMinutes();
       let currentId = null;
-      for(const t of schedule){
-        if(hmToMinutes(t.time) <= nowM) currentId = t.id;
-        else break;
+      if(dateKey === nowISODate()){
+        for(const t of schedule){
+          if(hmToMinutes(t.time) <= nowM) currentId = t.id;
+          else break;
+        }
       }
 
       for(const t of schedule){
-        const done = isDone(t.id);
+        const done = isDone(t.id, dateKey);
         const row = document.createElement("div");
         row.className = "item" + (t.id === currentId ? " nowGlow" : "") + (done ? " itemDone" : "");
         const tags = [];
@@ -1509,7 +1783,7 @@
               toast("✅","Done already","(Undo is not enabled — kids are too clever.)");
               return;
             }
-            markDone(t, row);
+            markDone(t, row, dateKey);
           });
         }
 
@@ -1712,7 +1986,7 @@
           <div style="border:1px solid rgba(11,16,32,.08); border-radius:18px; padding:12px; background:rgba(255,255,255,.82); box-shadow:0 16px 30px rgba(11,16,32,.08);">
             <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
               <div style="font-weight:1100;">🎹 Wednesday</div>
-              <div class="tagMini">Piano 17:15</div>
+              <div class="tagMini">Piano 17:45</div>
             </div>
             <div class="hint" style="margin-top:6px;">Piano lesson only.</div>
           </div>
@@ -1767,8 +2041,17 @@
     function renderAll(){
       renderTime();
       renderHUD();
+      renderViewDateControls();
       renderMissions();
-      renderSchedule();
+      renderChecklist();
+      const viewKey = getViewDateKey();
+      const schedulePage = document.getElementById("schedulePage");
+      const scheduleOpen = schedulePage && schedulePage.classList.contains("show");
+      if(scheduleOpen){
+        renderSchedule(true, standardSchedule(), viewKey);
+      }else{
+        renderSchedule(false, scheduleForDateKey(viewKey), viewKey);
+      }
       renderRewardShop();
       renderPurchasedRewards();
       renderParentScheduleList();
@@ -1793,11 +2076,27 @@
     // Add task
     document.getElementById("addTaskBtn").addEventListener("click", ()=> showModal("taskModal"));
     document.getElementById("openScheduleBtn").addEventListener("click", ()=>{
-      renderSchedule(true, standardSchedule());
+      renderSchedule(true, standardSchedule(), getViewDateKey());
       renderWeekdayBox();
       renderSpecialBox();
       showModal("schedulePage");
     });
+    const missionsBackBtn = document.getElementById("missionsBackBtn");
+    if(missionsBackBtn){
+      missionsBackBtn.addEventListener("click", ()=>{
+        const todayKey = nowISODate();
+        const currentKey = getViewDateKey();
+        const daysBack = Math.max(0, daysBetweenKeys(todayKey, currentKey));
+        const next = Math.min(daysBack + 1, MAX_BACK_DAYS);
+        setViewDateKey(offsetDateKey(next));
+      });
+    }
+    const viewLabel = document.getElementById("viewDateLabel");
+    if(viewLabel){
+      viewLabel.addEventListener("click", ()=>{
+        if(!isViewingToday()) setViewDateKey(nowISODate());
+      });
+    }
     document.getElementById("openShopBtn").addEventListener("click", ()=>{
       renderRewardShop();
       showModal("rewardModal");
@@ -2077,6 +2376,7 @@
       if(confirm("Start a new week? (Clears completions + reminders. Stars stay.)")){
         state.completedByDate = {};
         state.reminders = {};
+        state.checklistByDate = {};
         save();
         refreshScheduleCache();
         renderAll();
@@ -2086,14 +2386,22 @@
 
     // Mark NOW done
     document.getElementById("markNowDoneBtn").addEventListener("click", ()=>{
+      if(!isViewingToday()){
+        toast("🗓️","Past day","Switch to Today to use Now actions.");
+        return;
+      }
       const id = window.__currentTaskId;
       const t = cachedSchedule.find(x => x.id === id);
       if(!t){ toast("⚠️","No task","Nothing to mark right now."); return; }
-      toggleDone(t, document.getElementById("markNowDoneBtn"));
+      toggleDone(t, document.getElementById("markNowDoneBtn"), nowISODate());
     });
 
     // Nudge reminder for NOW (+5 min)
     document.getElementById("nudgeBtn").addEventListener("click", ()=>{
+      if(!isViewingToday()){
+        toast("🗓️","Past day","Switch to Today to set reminders.");
+        return;
+      }
       const id = window.__currentTaskId;
       const t = cachedSchedule.find(x => x.id === id);
       if(!t){ toast("⚠️","No task","Nothing to remind."); return; }
