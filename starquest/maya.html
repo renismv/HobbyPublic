@@ -1,0 +1,1165 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Maya Star Garden</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Fredoka:wght@400;600;700&display=swap');
+
+    :root {
+      --ink: #28324a;
+      --muted: #5b6788;
+      --sky: #fff7e7;
+      --mint: #dff6f0;
+      --peach: #ffd9c6;
+      --berry: #ff91b3;
+      --sun: #ffcc67;
+      --grass: #a6e3a1;
+      --blue: #b7e5ff;
+      --card: rgba(255, 255, 255, 0.86);
+      --shadow: 0 18px 40px rgba(40, 50, 74, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Fredoka", "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(700px 380px at 10% 8%, rgba(255, 214, 165, 0.75), transparent 60%),
+        radial-gradient(700px 380px at 90% 0%, rgba(168, 225, 255, 0.65), transparent 60%),
+        radial-gradient(800px 420px at 50% 100%, rgba(255, 182, 193, 0.45), transparent 60%),
+        linear-gradient(180deg, #fff7e7 0%, #fefcff 55%, #ffffff 100%);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 2px, transparent 3px) 0 0 / 40px 40px;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px;
+      padding-bottom: 40px;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 26px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 3px solid rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      animation: floatIn 0.6s ease both;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 22px;
+      color: #ffffff;
+      background: linear-gradient(160deg, #ffb46b, #ff7fb0);
+      box-shadow: 0 12px 20px rgba(255, 127, 176, 0.35);
+      flex: 0 0 auto;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0.3px;
+    }
+    .sub {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .date {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .pillGroup {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 12px 20px rgba(40, 50, 74, 0.12);
+      min-width: 110px;
+    }
+    .pillIcon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: #fff5cc;
+      color: #a86800;
+    }
+    .pillText {
+      display: grid;
+      gap: 2px;
+    }
+    .pillLabel {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .pillValue {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.4fr 0.8fr;
+      grid-template-areas:
+        "habits stars"
+        "habits rewards";
+    }
+    @media (max-width: 980px) {
+      .top { flex-direction: column; align-items: flex-start; }
+      .grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "stars"
+          "habits"
+          "rewards";
+      }
+      .pillGroup { width: 100%; justify-content: flex-start; }
+    }
+
+    .card {
+      border-radius: 26px;
+      background: var(--card);
+      border: 3px solid rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+      padding-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+      animation: floatIn 0.6s ease both;
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: -80px -90px auto auto;
+      width: 240px;
+      height: 160px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 200, 94, 0.25), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(255, 143, 184, 0.22), transparent 60%),
+        radial-gradient(circle at 40% 80%, rgba(168, 225, 255, 0.22), transparent 62%);
+      transform: rotate(12deg);
+      pointer-events: none;
+    }
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.2s; }
+
+    .cardHeader {
+      padding: 14px 16px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .cardHeader h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .dateControls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chipBtn {
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.9);
+      font-weight: 800;
+      color: var(--muted);
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(40, 50, 74, 0.12);
+    }
+    .chipBtn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .datePill {
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--ink);
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(40, 50, 74, 0.12);
+      white-space: nowrap;
+    }
+
+    .habitsCard { grid-area: habits; }
+    .starCard { grid-area: stars; }
+    .rewardsCard { grid-area: rewards; }
+
+    .habitGrid {
+      display: grid;
+      gap: 12px;
+      padding: 0 16px 12px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .habit {
+      position: relative;
+      border-radius: 22px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      background:
+        radial-gradient(140px 110px at 18% 20%, var(--accent) 0%, transparent 60%),
+        radial-gradient(160px 120px at 88% 10%, var(--accent2) 0%, transparent 62%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.74));
+      padding: 12px 10px;
+      display: grid;
+      gap: 8px;
+      align-items: center;
+      justify-items: center;
+      cursor: pointer;
+      min-height: 140px;
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: 0 14px 22px rgba(40, 50, 74, 0.14);
+    }
+    .habit::before {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      left: -40px;
+      top: -50px;
+      background: radial-gradient(circle, var(--accent2) 0%, transparent 70%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .habit::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      right: -40px;
+      bottom: -50px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.55), transparent 70%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .habit > * {
+      position: relative;
+      z-index: 1;
+    }
+    .habit:active { transform: translateY(1px) scale(0.98); }
+    .habit:hover { transform: translateY(-2px); }
+    .habitIcon {
+      width: 68px;
+      height: 68px;
+      border-radius: 22px;
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      display: grid;
+      place-items: center;
+      color: var(--icon);
+      box-shadow: 0 12px 20px rgba(40, 50, 74, 0.14);
+    }
+    .habitLabel {
+      font-size: 14px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .habitBadge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #fff3c4;
+      color: #8a5b00;
+      font-size: 11px;
+      font-weight: 800;
+      box-shadow: 0 8px 16px rgba(40, 50, 74, 0.12);
+    }
+    .habitCheck {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #d6f5db;
+      color: #2c7b3e;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 8px 16px rgba(40, 50, 74, 0.12);
+    }
+    .habit[data-done="true"] {
+      border-color: #7fd489;
+      background:
+        radial-gradient(160px 120px at 20% 15%, rgba(148, 233, 166, 0.6), transparent 62%),
+        radial-gradient(180px 140px at 90% 10%, rgba(255, 236, 199, 0.6), transparent 62%),
+        linear-gradient(180deg, rgba(236, 253, 245, 0.96), rgba(255, 255, 255, 0.82));
+    }
+    .habit[data-done="true"] .habitCheck {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .habit.pop { animation: pop 0.35s ease; }
+
+    .starBody {
+      padding: 0 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .starPanel {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 20px;
+      background:
+        radial-gradient(160px 120px at 20% 20%, rgba(255, 214, 165, 0.65), transparent 60%),
+        radial-gradient(180px 120px at 90% 10%, rgba(168, 225, 255, 0.6), transparent 60%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.75));
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 16px 24px rgba(40, 50, 74, 0.14);
+    }
+    .starBadge {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: #fff3c4;
+      color: #a86800;
+      font-size: 26px;
+      box-shadow: 0 10px 18px rgba(40, 50, 74, 0.12);
+    }
+    .starTitle {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .starValue {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .starSub {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .meter {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(40, 50, 74, 0.12);
+      overflow: hidden;
+    }
+    .meterFill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ffc85e, #ff8fb8);
+      transition: width 0.35s ease;
+    }
+    .meterText {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .dailyStars {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+    .star {
+      width: 18px;
+      height: 18px;
+      background: #f0e6d6;
+      clip-path: polygon(50% 4%, 61% 36%, 96% 36%, 68% 56%, 79% 90%, 50% 70%, 21% 90%, 32% 56%, 4% 36%, 39% 36%);
+      box-shadow: 0 6px 10px rgba(40, 50, 74, 0.12);
+    }
+    .star.on { background: #ffc85e; }
+
+    .rewardGrid {
+      padding: 0 16px 12px;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .reward {
+      border-radius: 20px;
+      padding: 10px;
+      background:
+        radial-gradient(140px 110px at 12% 20%, var(--rewardAccent) 0%, transparent 60%),
+        radial-gradient(170px 120px at 90% 10%, var(--rewardAccent2) 0%, transparent 60%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.7));
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 16px 26px rgba(40, 50, 74, 0.12);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .reward::before {
+      content: "";
+      position: absolute;
+      inset: -50px -60px auto auto;
+      width: 160px;
+      height: 120px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 200, 94, 0.25), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(255, 143, 184, 0.25), transparent 60%);
+      transform: rotate(18deg);
+      pointer-events: none;
+    }
+    .rIcon {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.78));
+      border: 1px solid rgba(40, 50, 74, 0.1);
+      box-shadow: 0 12px 20px rgba(40, 50, 74, 0.12);
+      flex: 0 0 auto;
+      position: relative;
+      z-index: 1;
+      color: var(--rewardInk, var(--ink));
+    }
+    .rText {
+      min-width: 0;
+      flex: 1 1 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .rText .t {
+      font-weight: 800;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .rText .p {
+      margin-top: 4px;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tagMini {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(124, 58, 237, 0.12);
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      font-weight: 800;
+      font-size: 11px;
+      color: #3b1a8f;
+    }
+    .cost {
+      font-weight: 800;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 199, 94, 0.25);
+      border: 1px solid rgba(255, 199, 94, 0.4);
+      color: #7a4b00;
+      white-space: nowrap;
+    }
+    .redeemBtn {
+      margin-left: auto;
+      border: 1px solid rgba(40, 50, 74, 0.12);
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 12px 22px rgba(40, 50, 74, 0.12);
+      position: relative;
+      z-index: 1;
+      white-space: nowrap;
+    }
+    .redeemBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .rewardBadge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ff8fb8;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      box-shadow: 0 10px 16px rgba(40, 50, 74, 0.16);
+    }
+
+    .tinyStar {
+      width: 12px;
+      height: 12px;
+      background: #ffcc67;
+      clip-path: polygon(50% 4%, 61% 36%, 96% 36%, 68% 56%, 79% 90%, 50% 70%, 21% 90%, 32% 56%, 4% 36%, 39% 36%);
+      display: inline-block;
+    }
+
+    .footer {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .resetBtn {
+      border: 2px dashed rgba(40, 50, 74, 0.2);
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(40, 50, 74, 0.12);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .resetBtn.holding {
+      background: #ffe6e6;
+      color: #bb3d3d;
+    }
+
+    .icon {
+      width: 30px;
+      height: 30px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 3.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .habitIcon .icon {
+      width: 34px;
+      height: 34px;
+    }
+    .rIcon .icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    .sprite {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="icon-sun" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="12"></circle>
+      <line x1="32" y1="4" x2="32" y2="14"></line>
+      <line x1="32" y1="50" x2="32" y2="60"></line>
+      <line x1="4" y1="32" x2="14" y2="32"></line>
+      <line x1="50" y1="32" x2="60" y2="32"></line>
+      <line x1="12" y1="12" x2="18" y2="18"></line>
+      <line x1="46" y1="46" x2="52" y2="52"></line>
+      <line x1="12" y1="52" x2="18" y2="46"></line>
+      <line x1="46" y1="18" x2="52" y2="12"></line>
+    </symbol>
+    <symbol id="icon-brush" viewBox="0 0 64 64">
+      <rect x="8" y="30" width="30" height="8" rx="4"></rect>
+      <rect x="36" y="24" width="20" height="20" rx="5"></rect>
+      <line x1="40" y1="24" x2="40" y2="18"></line>
+      <line x1="46" y1="24" x2="46" y2="18"></line>
+      <line x1="52" y1="24" x2="52" y2="18"></line>
+    </symbol>
+    <symbol id="icon-shirt" viewBox="0 0 64 64">
+      <path d="M22 12 L32 20 L42 12 L54 22 L48 34 L48 54 L16 54 L16 34 L10 22 Z"></path>
+    </symbol>
+    <symbol id="icon-bowl" viewBox="0 0 64 64">
+      <path d="M12 28 A20 20 0 0 0 52 28"></path>
+      <rect x="14" y="28" width="36" height="10" rx="5"></rect>
+      <line x1="18" y1="42" x2="46" y2="42"></line>
+    </symbol>
+    <symbol id="icon-ball" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="18"></circle>
+      <path d="M14 32 A18 18 0 0 0 50 32"></path>
+      <path d="M32 14 A18 18 0 0 0 32 50"></path>
+      <path d="M20 20 A18 18 0 0 0 44 44"></path>
+    </symbol>
+    <symbol id="icon-pencil" viewBox="0 0 64 64">
+      <path d="M16 48 L12 52 L12 58 L18 58 L22 54"></path>
+      <path d="M22 54 L50 26 L38 14 L10 42"></path>
+      <line x1="40" y1="16" x2="48" y2="24"></line>
+    </symbol>
+    <symbol id="icon-heart" viewBox="0 0 64 64">
+      <path d="M32 52 L14 34 C6 26 10 12 22 14 C28 15 32 20 32 20 C32 20 36 15 42 14 C54 12 58 26 50 34 Z"></path>
+    </symbol>
+    <symbol id="icon-tree" viewBox="0 0 64 64">
+      <circle cx="32" cy="26" r="16"></circle>
+      <rect x="28" y="38" width="8" height="16" rx="3"></rect>
+      <line x1="22" y1="54" x2="42" y2="54"></line>
+    </symbol>
+    <symbol id="icon-apple" viewBox="0 0 64 64">
+      <path d="M32 20 C24 20 18 26 18 34 C18 44 25 52 32 52 C39 52 46 44 46 34 C46 26 40 20 32 20 Z"></path>
+      <path d="M32 20 C30 14 34 10 40 10"></path>
+      <path d="M40 10 C44 10 48 14 48 18"></path>
+    </symbol>
+    <symbol id="icon-meat" viewBox="0 0 64 64">
+      <path d="M18 26 C18 18 24 14 32 14 C40 14 48 20 50 28 C52 36 48 44 40 46 C32 48 24 44 20 38"></path>
+      <circle cx="16" cy="32" r="6"></circle>
+      <circle cx="12" cy="32" r="3"></circle>
+      <circle cx="20" cy="32" r="3"></circle>
+    </symbol>
+    <symbol id="icon-bath" viewBox="0 0 64 64">
+      <rect x="12" y="34" width="40" height="14" rx="6"></rect>
+      <path d="M18 34 V26"></path>
+      <line x1="18" y1="26" x2="26" y2="26"></line>
+      <circle cx="24" cy="22" r="3"></circle>
+      <circle cx="38" cy="28" r="3"></circle>
+      <circle cx="46" cy="24" r="3"></circle>
+    </symbol>
+    <symbol id="icon-tooth" viewBox="0 0 64 64">
+      <path d="M24 14 C18 14 16 22 16 28 C16 40 22 52 26 52 C28 52 28 44 32 44 C36 44 36 52 38 52 C42 52 48 40 48 28 C48 22 46 14 40 14 C36 14 34 18 32 18 C30 18 28 14 24 14 Z"></path>
+    </symbol>
+    <symbol id="icon-book" viewBox="0 0 64 64">
+      <path d="M12 18 H30 V50 H12 Z"></path>
+      <path d="M34 18 H52 V50 H34 Z"></path>
+      <line x1="30" y1="22" x2="34" y2="22"></line>
+    </symbol>
+    <symbol id="icon-moon" viewBox="0 0 64 64">
+      <path d="M40 12 A18 18 0 1 0 52 44 A16 16 0 1 1 40 12 Z"></path>
+    </symbol>
+    <symbol id="icon-star" viewBox="0 0 64 64">
+      <path d="M32 8 L39 24 L56 24 L42 34 L48 52 L32 42 L16 52 L22 34 L8 24 L25 24 Z"></path>
+    </symbol>
+    <symbol id="icon-screen" viewBox="0 0 64 64">
+      <rect x="10" y="16" width="44" height="28" rx="4"></rect>
+      <line x1="24" y1="48" x2="40" y2="48"></line>
+      <line x1="32" y1="44" x2="32" y2="54"></line>
+    </symbol>
+    <symbol id="icon-cone" viewBox="0 0 64 64">
+      <path d="M20 26 A12 12 0 0 1 44 26"></path>
+      <path d="M20 26 L32 56 L44 26 Z"></path>
+      <circle cx="26" cy="20" r="4"></circle>
+      <circle cx="38" cy="20" r="4"></circle>
+    </symbol>
+    <symbol id="icon-sticker" viewBox="0 0 64 64">
+      <rect x="12" y="12" width="40" height="40" rx="8"></rect>
+      <path d="M32 20 L36 30 L46 30 L38 36 L41 46 L32 40 L23 46 L26 36 L18 30 L28 30 Z"></path>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 64 64">
+      <path d="M18 34 L28 44 L48 22"></path>
+    </symbol>
+    <symbol id="icon-spark" viewBox="0 0 64 64">
+      <path d="M32 10 L36 24 L50 28 L36 32 L32 46 L28 32 L14 28 L28 24 Z"></path>
+    </symbol>
+  </svg>
+
+  <main class="wrap">
+    <header class="top">
+      <div class="brand">
+        <div class="avatar">M</div>
+        <div>
+          <h1>Maya Star Garden</h1>
+          <div class="sub">Tiny habits, big sparkle</div>
+          <div class="date" id="todayDate"></div>
+        </div>
+      </div>
+      <div class="pillGroup">
+        <div class="pill">
+          <div class="pillIcon"><svg class="icon"><use href="#icon-star"></use></svg></div>
+          <div class="pillText">
+            <div class="pillLabel">Stars</div>
+            <div class="pillValue" id="starTotal">0</div>
+          </div>
+        </div>
+        <div class="pill">
+          <div class="pillIcon" style="background:#e8f6ff;color:#3f7aa8;"><svg class="icon"><use href="#icon-spark"></use></svg></div>
+          <div class="pillText">
+            <div class="pillLabel">Level</div>
+            <div class="pillValue" id="starLevel">1</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <section class="card habitsCard">
+        <div class="cardHeader">
+          <h2>Habit Trails</h2>
+          <div class="dateControls">
+            <button class="chipBtn" id="dayBackBtn" type="button" aria-label="Previous day">&#9664;</button>
+            <button class="datePill" id="viewDateLabel" type="button">Today</button>
+            <button class="chipBtn" id="dayForwardBtn" type="button" aria-label="Next day">&#9654;</button>
+          </div>
+        </div>
+        <div class="habitGrid" id="habitGrid"></div>
+      </section>
+
+      <section class="card starCard">
+        <div class="cardHeader">
+          <h2>Star Jar</h2>
+          <div class="hint">Habits <span id="todayCount">0</span>/<span id="todayTotal">0</span></div>
+        </div>
+        <div class="starBody">
+          <div class="starPanel">
+            <div class="starBadge">&#9733;</div>
+            <div>
+              <div class="starTitle">Stars</div>
+              <div class="starValue" id="starTotalLarge">0</div>
+              <div class="starSub">Habits done: <span id="todayCountSmall">0</span>/<span id="todayTotalSmall">0</span></div>
+            </div>
+          </div>
+          <div class="meter"><div class="meterFill" id="goalFill"></div></div>
+          <div class="meterText">Next reward at <span id="goalStars">30</span> stars</div>
+          <div class="dailyStars" id="dailyStars"></div>
+        </div>
+      </section>
+
+      <section class="card rewardsCard">
+        <div class="cardHeader">
+          <h2>Rewards Chest</h2>
+          <div class="hint">Spend stars for fun</div>
+        </div>
+        <div class="rewardGrid" id="rewardGrid"></div>
+      </section>
+    </section>
+
+    <footer class="footer">
+      <button class="resetBtn" id="resetBtn" type="button">Hold to reset this day</button>
+    </footer>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "maya-star-garden-v2";
+    const LEVEL_STEP = 20;
+    const MAX_BACK_DAYS = 3;
+
+    const HABITS = [
+      { id: "sleep", label: "Sleep", icon: "icon-moon", stars: 1, accent: "#dfe8ff", accent2: "#f7d6ff", iconColor: "#4a5a9a" },
+      { id: "teeth", label: "Brush Teeth", icon: "icon-tooth", stars: 1, accent: "#fff1c9", accent2: "#ffe0a6", iconColor: "#8a6a00" },
+      { id: "wash", label: "Wash Hands", icon: "icon-spark", stars: 1, accent: "#d7f3ff", accent2: "#c9e9ff", iconColor: "#2d7ea8" },
+      { id: "protein", label: "Meat/Protein", icon: "icon-meat", stars: 1, accent: "#ffd2c2", accent2: "#ffb9a8", iconColor: "#a64b3b" },
+      { id: "fuel", label: "Fruit + Water", icon: "icon-apple", stars: 1, accent: "#dff6d7", accent2: "#c4f0d0", iconColor: "#3a7a3f" },
+      { id: "move", label: "Move + Play", icon: "icon-ball", stars: 1, accent: "#d7f3ff", accent2: "#bfe7ff", iconColor: "#2d7ea8" },
+      { id: "outside", label: "Outside", icon: "icon-tree", stars: 1, accent: "#dff6d7", accent2: "#c5f3b2", iconColor: "#3a7a3f" },
+      { id: "kind", label: "Kindness", icon: "icon-heart", stars: 1, accent: "#ffd6d9", accent2: "#ffb9c6", iconColor: "#b84a5a" },
+      { id: "tidy", label: "Tidy Toys", icon: "icon-sticker", stars: 1, accent: "#fff2c9", accent2: "#ffe0a0", iconColor: "#a86800" },
+      { id: "story", label: "Story Time", icon: "icon-book", stars: 1, accent: "#f1dbff", accent2: "#e3c1ff", iconColor: "#6a4ba3" }
+    ];
+
+    const REWARD_COST = 30;
+    const REWARDS = [
+      { id: "rw-movie", name: "Choose the movie", note: "Movie night", cost: REWARD_COST, icon: "icon-screen", accent: "#cfe6ff", accent2: "#b8d8ff", ink: "#3b5b8a" },
+      { id: "rw-dessert", name: "Pick dessert", note: "Dessert boss", cost: REWARD_COST, icon: "icon-cone", accent: "#ffe2c2", accent2: "#ffd1a0", ink: "#a35b2a" },
+      { id: "rw-surprise", name: "Small surprise", note: "Tiny toy / sticker pack", cost: REWARD_COST, icon: "icon-sticker", accent: "#ffd6f2", accent2: "#ffb7e0", ink: "#b84a77" },
+      { id: "rw-library", name: "Library + treat", note: "Book + snack", cost: REWARD_COST, icon: "icon-book", accent: "#eddcff", accent2: "#dcc4ff", ink: "#6a4ba3" },
+      { id: "rw-outside", name: "Extra play outside", note: "Park / walk", cost: REWARD_COST, icon: "icon-tree", accent: "#dbf7d3", accent2: "#c0edb0", ink: "#3a7a3f" },
+      { id: "rw-art", name: "Craft or art time", note: "Creative hour", cost: REWARD_COST, icon: "icon-pencil", accent: "#ffe7c7", accent2: "#ffd7a6", ink: "#b26b2a" },
+      { id: "rw-board", name: "Board game pick", note: "Family game night", cost: REWARD_COST, icon: "icon-star", accent: "#fff2c9", accent2: "#ffe0a0", ink: "#a86800" },
+      { id: "rw-bake", name: "Bake together", note: "Kitchen helper", cost: REWARD_COST, icon: "icon-bowl", accent: "#ffe6c5", accent2: "#ffd1a5", ink: "#9a5a00" },
+      { id: "rw-puzzle", name: "Puzzle pick", note: "Choose the puzzle", cost: REWARD_COST, icon: "icon-sticker", accent: "#ffe1f0", accent2: "#ffc2dc", ink: "#b84a77" },
+      { id: "rw-outing", name: "Surprise outing", note: "Pick a place", cost: REWARD_COST, icon: "icon-spark", accent: "#fff0b8", accent2: "#ffe49a", ink: "#a86800" }
+    ];
+
+    const state = loadState();
+    const habitButtons = {};
+
+    const dateFormatter = new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+      month: "short",
+      day: "numeric"
+    });
+
+    function todayKey() {
+      const d = new Date();
+      return d.toISOString().slice(0, 10);
+    }
+
+    function dateKeyFromDate(date) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    function dateFromKeyNoon(key) {
+      return new Date(key + "T12:00:00");
+    }
+
+    function offsetDateKey(daysBack) {
+      const d = new Date();
+      d.setDate(d.getDate() - daysBack);
+      return dateKeyFromDate(d);
+    }
+
+    function daysBetweenKeys(newerKey, olderKey) {
+      const newer = dateFromKeyNoon(newerKey).getTime();
+      const older = dateFromKeyNoon(olderKey).getTime();
+      return Math.max(0, Math.round((newer - older) / 86400000));
+    }
+
+    function getViewDateKey() {
+      return state.viewDateKey || todayKey();
+    }
+
+    function setViewDateKey(key) {
+      state.viewDateKey = key;
+      saveState();
+      render();
+    }
+
+    function viewDateLabel(key) {
+      const diff = daysBetweenKeys(todayKey(), key);
+      if (diff === 0) return "Today";
+      if (diff === 1) return "Yesterday";
+      return diff + " days ago";
+    }
+
+    function loadState() {
+      const base = { wallet: 0, doneByDate: {}, rewardCounts: {}, viewDateKey: null };
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return base;
+        const parsed = JSON.parse(raw);
+        return {
+          wallet: typeof parsed.wallet === "number" ? parsed.wallet : base.wallet,
+          doneByDate: parsed.doneByDate || {},
+          rewardCounts: parsed.rewardCounts || {},
+          viewDateKey: parsed.viewDateKey || null
+        };
+      } catch (err) {
+        return base;
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function getDoneMap(dateKey = getViewDateKey()) {
+      const key = dateKey;
+      if (!state.doneByDate[key]) state.doneByDate[key] = {};
+      return state.doneByDate[key];
+    }
+
+    function buildHabits() {
+      const grid = document.getElementById("habitGrid");
+      grid.innerHTML = "";
+
+      HABITS.forEach((habit) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "habit";
+        btn.dataset.habit = habit.id;
+        btn.style.setProperty("--accent", habit.accent);
+        btn.style.setProperty("--accent2", habit.accent2 || habit.accent);
+        btn.style.setProperty("--icon", habit.iconColor);
+        btn.setAttribute("aria-pressed", "false");
+        btn.setAttribute("aria-label", habit.label);
+        btn.innerHTML = `
+          <div class="habitBadge">+${habit.stars}</div>
+          <div class="habitIcon"><svg class="icon"><use href="#${habit.icon}"></use></svg></div>
+          <div class="habitLabel">${habit.label}</div>
+          <div class="habitCheck"><svg class="icon"><use href="#icon-check"></use></svg></div>
+        `;
+        btn.addEventListener("click", () => toggleHabit(habit.id));
+        habitButtons[habit.id] = btn;
+        grid.appendChild(btn);
+      });
+    }
+
+    function toggleHabit(id) {
+      const habit = HABITS.find((item) => item.id === id);
+      if (!habit) return;
+      const viewKey = getViewDateKey();
+      const doneMap = getDoneMap(viewKey);
+      const wasDone = !!doneMap[id];
+      doneMap[id] = !wasDone;
+      state.wallet = Math.max(0, state.wallet + (wasDone ? -habit.stars : habit.stars));
+      saveState();
+      render();
+      const btn = habitButtons[id];
+      if (btn) {
+        btn.classList.remove("pop");
+        void btn.offsetWidth;
+        btn.classList.add("pop");
+      }
+    }
+
+    function dailyCount(dateKey = getViewDateKey()) {
+      const doneMap = getDoneMap(dateKey);
+      let count = 0;
+      HABITS.forEach((habit) => {
+        if (doneMap[habit.id]) count += 1;
+      });
+      return count;
+    }
+
+    function updateStars() {
+      const viewKey = getViewDateKey();
+      const count = dailyCount(viewKey);
+      const total = HABITS.length;
+      document.getElementById("todayCount").textContent = String(count);
+      document.getElementById("todayTotal").textContent = String(total);
+      const countSmall = document.getElementById("todayCountSmall");
+      const totalSmall = document.getElementById("todayTotalSmall");
+      if (countSmall) countSmall.textContent = String(count);
+      if (totalSmall) totalSmall.textContent = String(total);
+      document.getElementById("starTotal").textContent = String(state.wallet);
+      document.getElementById("starTotalLarge").textContent = String(state.wallet);
+      document.getElementById("starLevel").textContent = String(Math.floor(state.wallet / LEVEL_STEP) + 1);
+      setStarRow(count, total);
+      updateGoal();
+    }
+
+    function setStarRow(count, total) {
+      const row = document.getElementById("dailyStars");
+      if (row.children.length !== total) {
+        row.innerHTML = "";
+        for (let i = 0; i < total; i += 1) {
+          const star = document.createElement("span");
+          star.className = "star";
+          row.appendChild(star);
+        }
+      }
+      Array.from(row.children).forEach((star, index) => {
+        star.classList.toggle("on", index < count);
+      });
+    }
+
+    function updateGoal() {
+      const costs = REWARDS.map((reward) => reward.cost).sort((a, b) => a - b);
+      let goal = costs.find((cost) => cost > state.wallet);
+      if (!goal) goal = costs[costs.length - 1];
+      const percent = Math.min(100, Math.round((state.wallet / goal) * 100));
+      document.getElementById("goalStars").textContent = String(goal);
+      document.getElementById("goalFill").style.width = percent + "%";
+    }
+
+    function updateHabits() {
+      const doneMap = getDoneMap(getViewDateKey());
+      HABITS.forEach((habit) => {
+        const btn = habitButtons[habit.id];
+        if (!btn) return;
+        const done = !!doneMap[habit.id];
+        btn.dataset.done = done ? "true" : "false";
+        btn.setAttribute("aria-pressed", done ? "true" : "false");
+      });
+    }
+
+    function renderRewards() {
+      const grid = document.getElementById("rewardGrid");
+      grid.innerHTML = "";
+      REWARDS.forEach((reward) => {
+        const count = state.rewardCounts[reward.id] || 0;
+        const canClaim = state.wallet >= reward.cost;
+        const card = document.createElement("div");
+        card.className = "reward";
+        card.style.setProperty("--rewardAccent", reward.accent || "#ffe7c7");
+        card.style.setProperty("--rewardAccent2", reward.accent2 || reward.accent || "#ffd7a6");
+        card.style.setProperty("--rewardInk", reward.ink || "#3b5b8a");
+        card.innerHTML = `
+          <div class="rIcon"><svg class="icon"><use href="#${reward.icon}"></use></svg></div>
+          <div class="rText">
+            <div class="t">${reward.name}</div>
+            <div class="p">
+              <span class="tagMini">${reward.note}</span>
+              <span class="cost">${reward.cost} &#9733;</span>
+            </div>
+          </div>
+          <button class="redeemBtn" type="button" ${canClaim ? "" : "disabled"} aria-label="Claim ${reward.name}">
+            ${canClaim ? "Unlock" : "Need &#9733;"}
+          </button>
+          ${count ? `<div class="rewardBadge">x${count}</div>` : ""}
+        `;
+        const btn = card.querySelector("button");
+        btn.addEventListener("click", () => claimReward(reward));
+        grid.appendChild(card);
+      });
+    }
+
+    function claimReward(reward) {
+      if (state.wallet < reward.cost) return;
+      state.wallet -= reward.cost;
+      state.rewardCounts[reward.id] = (state.rewardCounts[reward.id] || 0) + 1;
+      saveState();
+      render();
+    }
+
+    function resetToday() {
+      const key = getViewDateKey();
+      const doneMap = getDoneMap(key);
+      let spent = 0;
+      HABITS.forEach((habit) => {
+        if (doneMap[habit.id]) spent += habit.stars;
+      });
+      state.wallet = Math.max(0, state.wallet - spent);
+      state.doneByDate[key] = {};
+      saveState();
+      render();
+    }
+
+    function renderDateControls() {
+      const label = document.getElementById("viewDateLabel");
+      const backBtn = document.getElementById("dayBackBtn");
+      const forwardBtn = document.getElementById("dayForwardBtn");
+      if (!label || !backBtn || !forwardBtn) return;
+
+      const viewKey = getViewDateKey();
+      const diff = daysBetweenKeys(todayKey(), viewKey);
+      const dayText = viewDateLabel(viewKey);
+      const dateText = dateFormatter.format(dateFromKeyNoon(viewKey));
+      label.textContent = dayText + " - " + dateText;
+
+      backBtn.disabled = diff >= MAX_BACK_DAYS;
+      forwardBtn.disabled = diff === 0;
+    }
+
+    function render() {
+      renderDateControls();
+      updateStars();
+      updateHabits();
+      renderRewards();
+    }
+
+    function init() {
+      document.getElementById("todayDate").textContent = "Today " + dateFormatter.format(new Date());
+      buildHabits();
+      const initialDiff = daysBetweenKeys(todayKey(), getViewDateKey());
+      if (initialDiff > MAX_BACK_DAYS) {
+        state.viewDateKey = todayKey();
+        saveState();
+      }
+      render();
+
+      const backBtn = document.getElementById("dayBackBtn");
+      const forwardBtn = document.getElementById("dayForwardBtn");
+      const labelBtn = document.getElementById("viewDateLabel");
+      if (backBtn && forwardBtn && labelBtn) {
+        backBtn.addEventListener("click", () => {
+          const diff = daysBetweenKeys(todayKey(), getViewDateKey());
+          const next = Math.min(MAX_BACK_DAYS, diff + 1);
+          setViewDateKey(offsetDateKey(next));
+        });
+        forwardBtn.addEventListener("click", () => {
+          const diff = daysBetweenKeys(todayKey(), getViewDateKey());
+          const next = Math.max(0, diff - 1);
+          setViewDateKey(offsetDateKey(next));
+        });
+        labelBtn.addEventListener("click", () => {
+          setViewDateKey(todayKey());
+        });
+      }
+
+      const resetBtn = document.getElementById("resetBtn");
+      let resetTimer = null;
+      resetBtn.addEventListener("pointerdown", () => {
+        resetBtn.classList.add("holding");
+        resetTimer = setTimeout(() => {
+          resetToday();
+          resetBtn.classList.remove("holding");
+        }, 1200);
+      });
+      ["pointerup", "pointerleave", "pointercancel"].forEach((eventName) => {
+        resetBtn.addEventListener(eventName, () => {
+          resetBtn.classList.remove("holding");
+          if (resetTimer) clearTimeout(resetTimer);
+        });
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
+
