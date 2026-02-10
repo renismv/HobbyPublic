@@ -29,10 +29,12 @@
       font-family: "Fredoka", "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(700px 380px at 8% 8%, rgba(255, 214, 165, 0.75), transparent 60%),
-        radial-gradient(800px 420px at 92% 6%, rgba(168, 225, 255, 0.65), transparent 62%),
-        radial-gradient(800px 420px at 50% 100%, rgba(255, 182, 193, 0.45), transparent 60%),
-        linear-gradient(180deg, #e9f7ff 0%, #fff7e7 45%, #fefcff 70%, #e7ffe7 100%);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.92)),
+        url("assets/playground-bg.png");
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       overflow-x: hidden;
     }
     body::before {
@@ -41,22 +43,6 @@
       inset: 0;
       background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 2px, transparent 3px) 0 0 / 40px 40px;
       opacity: 0.35;
-      z-index: 0;
-      pointer-events: none;
-    }
-    body::after {
-      content: "";
-      position: fixed;
-      left: -10%;
-      right: -10%;
-      bottom: -70px;
-      height: 260px;
-      background:
-        radial-gradient(circle at 15% 40%, rgba(255, 255, 255, 0.35), transparent 60%),
-        radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.4), transparent 55%),
-        radial-gradient(circle at 85% 40%, rgba(255, 255, 255, 0.35), transparent 60%),
-        linear-gradient(180deg, rgba(193, 241, 188, 0.95), rgba(120, 210, 142, 0.98));
-      border-radius: 50% 50% 0 0;
       z-index: 0;
       pointer-events: none;
     }
