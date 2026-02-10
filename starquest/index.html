@@ -635,7 +635,7 @@
       z-index:1;
       white-space:nowrap;
     }
-    .redeemBtn[disabled]{ opacity:.55; cursor:not-allowed; }
+    .redeemBtn.isDisabled{ opacity:.55; cursor:not-allowed; }
 
     .rewardList{
       display:grid;
@@ -1512,7 +1512,21 @@
     }
 
     let state = safeLoad() || defaultState();
+    normalizeState();
     normalizeRewards();
+
+    function normalizeState(){
+      if(!state || typeof state !== "object") state = defaultState();
+      if(!Array.isArray(state.rewards)) state.rewards = [];
+      if(!Array.isArray(state.purchasedRewards)) state.purchasedRewards = [];
+      if(!state.completedByDate || typeof state.completedByDate !== "object") state.completedByDate = {};
+      if(!state.customTasksByDate || typeof state.customTasksByDate !== "object") state.customTasksByDate = {};
+      if(!state.reminders || typeof state.reminders !== "object") state.reminders = {};
+      if(!state.checklistByDate || typeof state.checklistByDate !== "object") state.checklistByDate = {};
+      if(!state.parent || typeof state.parent !== "object"){
+        state.parent = { codeHash: null, codePlain: null, unlockedUntil: 0 };
+      }
+    }
 
     function normalizeRewards(){
       if(!Array.isArray(state.rewards)) state.rewards = [];
@@ -2239,6 +2253,8 @@
     }
 
     function renderRewardShop(){
+      normalizeRewards();
+      if(!Array.isArray(state.rewards)) state.rewards = [];
       const grid = document.getElementById("rewardGrid");
       grid.innerHTML = "";
       const parentOn = isParentUnlocked();
@@ -2258,7 +2274,7 @@
               <span class="cost">${r.cost} ⭐</span>
             </div>
           </div>
-          <button class="redeemBtn" ${btnDisabled ? "disabled" : ""}>${parentOn ? (canAfford ? "Unlock" : "Need ⭐") : "Parent 🔒"}</button>
+          <button class="redeemBtn${btnDisabled ? " isDisabled" : ""}">${parentOn ? (canAfford ? "Unlock" : "Need ⭐") : "Parent 🔒"}</button>
         `;
 
         const btn = card.querySelector(".redeemBtn");
@@ -2266,12 +2282,14 @@
           ev.stopPropagation();
           if(!isParentUnlocked()){
             toast("🔒","Parent needed","Ask Uppa to unlock Parent Mode.");
+            showModal("parentGateModal");
             return;
           }
           if(state.stars < r.cost){
             toast("⭐","Not enough stars", `Need ${r.cost - state.stars} more ⭐`);
             return;
           }
+          if(!Array.isArray(state.purchasedRewards)) state.purchasedRewards = [];
 
           state.stars -= r.cost;
           state.purchasedRewards.unshift({
@@ -2316,6 +2334,7 @@
     }
 
     function renderPurchasedRewards(){
+      if(!Array.isArray(state.purchasedRewards)) state.purchasedRewards = [];
       const earnedGrid = document.getElementById("earnedRewardGrid");
       const parentGrid = document.getElementById("parentRewardList");
       if(earnedGrid){
@@ -2744,6 +2763,7 @@
     document.getElementById("saveRewardBtn").addEventListener("click", ()=>{
       if(!isParentUnlocked()){
         toast("🔒","Parent needed","Unlock Parent Mode first.");
+        showModal("parentGateModal");
         return;
       }
       const name = document.getElementById("rewardName").value.trim();
