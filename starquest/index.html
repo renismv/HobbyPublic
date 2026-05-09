@@ -1481,7 +1481,8 @@
       { id: "rw11", icon:"🎤", name:"Mini karaoke", cost:REWARD_COST, note:"Sing 2 songs" },
       { id: "rw12", icon:"🛼", name:"Skate time", cost:REWARD_COST, note:"Wheel adventure" },
       { id: "rw13", icon:"🎟️", name:"Surprise outing", cost:REWARD_COST, note:"Pick a place" },
-      { id: "rw14", icon:"🧩", name:"Puzzle pick", cost:REWARD_COST, note:"Choose the puzzle" }
+      { id: "rw14", icon:"🧩", name:"Puzzle pick", cost:REWARD_COST, note:"Choose the puzzle" },
+      { id: "rw15", icon:"💵", name:"Cash out stars", cost:1, note:"1 ⭐ = 1 kr" }
     ];
 
     const CORE_CHECKLIST = [
@@ -1538,16 +1539,17 @@
         if(!r || typeof r !== "object") continue;
         const base = byId.get(r.id);
         if(base){
-          merged.push({ ...base, ...r, id: base.id, cost: REWARD_COST });
+          merged.push({ ...base, ...r, id: base.id, cost: Number.isFinite(+r.cost) ? Math.max(1, +r.cost) : base.cost });
           seen.add(base.id);
         }else{
           const rid = r.id || ("rw|" + randId());
-          merged.push({ ...r, id: rid, cost: REWARD_COST });
+          const customCost = Number.isFinite(+r.cost) ? Math.max(1, +r.cost) : REWARD_COST;
+          merged.push({ ...r, id: rid, cost: customCost });
         }
       }
 
       for(const r of DEFAULT_REWARDS){
-        if(!seen.has(r.id)) merged.push({ ...r, cost: REWARD_COST });
+        if(!seen.has(r.id)) merged.push({ ...r });
       }
 
       state.rewards = merged;
@@ -1648,6 +1650,7 @@
         makeTask(p,"07:30","🥣","Breakfast","routine"),
         makeTask(p,"07:45","🎒","School","routine"),
         makeTask(p,"15:00","🏠","Home + snack + change + dishwasher check 1","routine","Unload/load if needed"),
+        makeTask(p,"15:05","🍽️","Unload dishwasher","mission","1 star mission", 1),
         makeTask(p,"15:30","📱","Screen time","routine","Max 1 hour"),
         makeTask(p,"16:15","🧹","Tidy up","mission","Room + table", 1),
         makeTask(p,"16:30","🕌","Arabic class","routine","Starts 16:30"),
@@ -1658,6 +1661,7 @@
         makeTask(p,"19:30","✏️","Learning Quest","mission","Focus time", 1),
         makeTask(p,"19:45","👨‍👩‍👧","Family time","routine","Ideally together 💛"),
         makeTask(p,"20:30","🍽️","Dishwasher check","routine","Unload/load if needed"),
+        makeTask(p,"20:35","🧼","Load dishwasher","mission","1 star mission", 1),
         makeTask(p,"20:45","🛁","Shower + bedtime prep","routine"),
         makeTask(p,"21:00","📖","Read + lights out","routine","Relax & sleep")
       ];
