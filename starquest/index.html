@@ -1276,6 +1276,31 @@
         <div class="card">
           <div class="cardHeader">
             <div>
+              <h2>Stars</h2>
+              <div class="hint">Add bonus stars after Parent Mode is unlocked.</div>
+            </div>
+            <div class="hint">Balance: <b id="parentStarBalance">0</b> ⭐</div>
+          </div>
+          <div class="schedule" style="padding-top:0;">
+            <div class="formGrid">
+              <div>
+                <label>Stars to add</label>
+                <input id="parentStarsAdd" type="number" min="1" step="1" value="1" />
+              </div>
+              <div>
+                <label>Reason (optional)</label>
+                <input id="parentStarsReason" placeholder="e.g., bonus helper" />
+              </div>
+            </div>
+            <div class="row">
+              <button class="xBtn primary" id="addParentStarsBtn">⭐ Add stars</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
               <h2>Reward Shop Setup</h2>
               <div class="hint">Add rewards or reset the week.</div>
             </div>
@@ -1859,6 +1884,8 @@
 
     function renderHUD(){
       document.getElementById("starBalance").textContent = state.stars;
+      const parentStarBalance = document.getElementById("parentStarBalance");
+      if(parentStarBalance) parentStarBalance.textContent = state.stars;
       document.getElementById("streak").textContent = calcStreak();
       renderStarStats();
       const parentLabel = "Parent: " + (isParentUnlocked() ? "ON ✅" : "OFF");
@@ -2761,6 +2788,33 @@
       document.getElementById("parentCodeInput").value = "";
       document.getElementById("newParentCode").value = "";
       document.getElementById("confirmParentCode").value = "";
+    });
+
+    document.getElementById("addParentStarsBtn").addEventListener("click", ()=>{
+      if(!isParentUnlocked()){
+        toast("🔒","Parent needed","Unlock Parent Mode first.");
+        showModal("parentGateModal");
+        return;
+      }
+
+      const input = document.getElementById("parentStarsAdd");
+      const reasonInput = document.getElementById("parentStarsReason");
+      const amount = parseInt(input.value || "0", 10);
+      if(!Number.isFinite(amount) || amount < 1){
+        toast("⚠️","Missing stars","Enter 1 or more stars.");
+        return;
+      }
+
+      const starsToAdd = amount;
+      state.stars += starsToAdd;
+      save();
+      renderAll();
+      popStars(window.innerWidth / 2, window.innerHeight - 120);
+
+      const reason = reasonInput.value.trim();
+      toast("⭐","Stars added", `+${starsToAdd} ⭐${reason ? ` for ${reason}` : ""}`);
+      input.value = "1";
+      reasonInput.value = "";
     });
 
     document.getElementById("saveRewardBtn").addEventListener("click", ()=>{
